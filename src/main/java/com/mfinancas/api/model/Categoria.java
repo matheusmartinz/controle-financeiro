@@ -4,11 +4,11 @@ import com.mfinancas.api.TipoCategoria;
 import jakarta.persistence.*;
 
 @Entity
-public class Categoria extends AbstractEntity{
+public class Categoria extends AbstractEntity {
     private String nome;
 
     @Enumerated(EnumType.STRING)
-    private TipoCategoria tipo; // RECEITA ou DESPESA
+    private TipoCategoria tipo;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
