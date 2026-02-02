@@ -4,6 +4,6 @@ import com.mfinancas.api.TipoCategoria;
 
 import java.util.UUID;
 
-public record CategoriaTO(String nome, TipoCategoria tipo, UUID usuario) {
+public record CategoriaTO(UUID uuidCategoria, String nome, TipoCategoria tipo, UUID usuario) {
 
 };
