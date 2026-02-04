@@ -1,12 +1,17 @@
 package com.mfinancas.api.model;
 
+import com.mfinancas.api.dto.UsuarioTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
-public class Usuario extends AbstractEntity{
+@NoArgsConstructor
+@Getter
+public class Usuario extends AbstractEntity {
 
     private String nome;
 
@@ -22,4 +27,14 @@ public class Usuario extends AbstractEntity{
 
     @OneToMany(mappedBy = "usuario")
     private List<Categoria> categorias;
+
+    public Usuario(UsuarioTO usuarioTO) {
+        super();
+        this.nome = usuarioTO.nome();
+        this.email = usuarioTO.email();
+        this.senha = usuarioTO.senha();
+        this.receitas = usuarioTO.receitas();
+        this.despesas = usuarioTO.despesas();
+        this.categorias = usuarioTO.categorias();
+    }
 }
