@@ -13,7 +13,7 @@ public class Despesa extends AbstractEntity {
 
     private BigDecimal valor;
 
-    private LocalDate data;
+    private LocalDate dataVencimento;
 
     private Boolean pago;
 

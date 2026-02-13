@@ -13,4 +13,8 @@ public class SuperServiceSave<T, R extends JpaRepository<T, UUID>> {
     public T save(T entity) {
         return repository.save(entity);
     }
+
+    public T saveAndFlush(T entity) {
+        return repository.saveAndFlush(entity);
+    }
 }

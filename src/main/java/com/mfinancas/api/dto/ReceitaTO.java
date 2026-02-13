@@ -7,5 +7,5 @@ import java.util.UUID;
 public record ReceitaTO(UUID uuidReceita,String descricao, BigDecimal valor,
                         LocalDate data,
                         UUID usuario,
-                        UUID categoria) {
+                        CategoriaTO categoriaTO) {
 }

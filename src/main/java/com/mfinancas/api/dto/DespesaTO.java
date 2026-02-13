@@ -8,9 +8,7 @@ public record DespesaTO(
         UUID uuidDespesa,
         String descricao,
         BigDecimal valor,
-        LocalDate data,
+        LocalDate dataVencimento,
         Boolean pago,
-        UUID usuario,
-        UUID categoria) {
-
+        CategoriaTO categoria) {
 }
