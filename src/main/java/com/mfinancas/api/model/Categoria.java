@@ -2,7 +2,9 @@ package com.mfinancas.api.model;
 
 import com.mfinancas.api.TipoCategoria;
 import com.mfinancas.api.dto.CategoriaTO;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,14 +17,10 @@ public class Categoria extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private TipoCategoria tipo;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
 
-    public Categoria(CategoriaTO categoriaTO, Usuario usuario) {
+    public Categoria(CategoriaTO categoriaTO) {
         super();
-        this.nome = categoriaTO.nome();
+        this.nome = categoriaTO.descricao();
         this.tipo = categoriaTO.tipo();
-        this.usuario = usuario;
     }
 }

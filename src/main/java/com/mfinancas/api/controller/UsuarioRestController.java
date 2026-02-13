@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("controle-financeiro")
+@CrossOrigin(origins = "*")
 public class UsuarioRestController {
 
     @Autowired
@@ -26,5 +27,9 @@ public class UsuarioRestController {
         return ResponseEntity.ok(usuarioService.getAll());
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> login (@RequestBody UsuarioTO usuarioTO) {
+        return ResponseEntity.ok().body("Login realizado com sucesso");
+    }
     //@put
 }

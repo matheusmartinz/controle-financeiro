@@ -16,10 +16,8 @@ public class UsuarioCreateDataProvider {
             UUID.randomUUID(),
             "Jorge",
             "jorge@gmail.com",
-            "jorge123",
-            null,
-            null,
-            null
+            "jorge123"
+
     );
 
     public UsuarioTO createUsuarioTO() {
