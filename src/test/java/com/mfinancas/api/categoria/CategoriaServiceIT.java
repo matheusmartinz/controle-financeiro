@@ -1,7 +1,9 @@
 package com.mfinancas.api.categoria;
 
 import com.mfinancas.api.TipoCategoria;
+import com.mfinancas.api.dataprovider.UsuarioCreateDataProvider;
 import com.mfinancas.api.dto.CategoriaTO;
+import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.service.CategoriaRepository;
 import com.mfinancas.api.service.CategoriaService;
 import org.assertj.core.api.SoftAssertions;
@@ -21,16 +23,22 @@ public class CategoriaServiceIT {
     @Autowired
     CategoriaService categoriaService;
 
+    @Autowired
+    UsuarioCreateDataProvider  usuarioCreateDataProvider;
+
     @Test
     public void createCategoria() {
+        UsuarioTO usuarioResponse = usuarioCreateDataProvider.createUsuarioTO();
+
         CategoriaTO categoriaTO = new CategoriaTO(
                 UUID.randomUUID(),
                 "Lazer",
-                TipoCategoria.DESPESA
+                TipoCategoria.DESPESA,
+                usuarioResponse.uuidUsuario()
         );
         long before = categoriaRepository.count();
 
-        CategoriaTO toResponseCategoria = categoriaService.createCategoria(categoriaTO);
+        CategoriaTO toResponseCategoria = categoriaService.createCategoria(categoriaTO, categoriaTO.usuarioFK());
 
         long after = categoriaRepository.count();
 

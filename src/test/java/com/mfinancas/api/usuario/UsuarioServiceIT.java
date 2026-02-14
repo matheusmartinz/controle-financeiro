@@ -23,7 +23,7 @@ public class UsuarioServiceIT {
 
     @Test
     public void createUsuario() {
-        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "João", "matheus@gmail.com", "blablabla");
+        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
         int before = usuarioRepository.findAll().size();
 
         UsuarioTO usuarioResponse = usuarioService.createUsuario(usuarioTO);
@@ -31,7 +31,6 @@ public class UsuarioServiceIT {
         int after = usuarioRepository.findAll().size();
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThat(usuarioResponse.nome()).isNotEqualTo(null);
             s.assertThat(usuarioResponse.senha()).isNotEqualTo(null);
             s.assertThat(after).isEqualTo(before + 1);
         });
@@ -39,7 +38,7 @@ public class UsuarioServiceIT {
 
     @Test
     public void getAllUsuarios() {
-        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "João", "matheus@gmail.com", "blablabla");
+        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
         usuarioService.createUsuario(usuarioTO);
 
         List<UsuarioTO> listUsuarios = usuarioService.getAll();
