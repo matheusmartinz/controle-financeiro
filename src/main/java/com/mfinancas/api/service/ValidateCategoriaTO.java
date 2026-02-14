@@ -3,12 +3,24 @@ package com.mfinancas.api.service;
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
+import com.mfinancas.api.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
+@RequiredArgsConstructor
 public class ValidateCategoriaTO {
 
-    public void validarCategoriaRequest(CategoriaTO categoriaTO) {
+    @Autowired
+    private final UsuarioRepository usuarioRepository;
+
+    public void validarCategoriaRequest(CategoriaTO categoriaTO, UUID usuarioFK) {
+        if (usuarioRepository.findById(usuarioFK).isEmpty()) {
+            throw new IsNull("Usuário não encontrado");
+        }
         if (categoriaTO == null) {
             throw new IsNull("Obrigatório inserir as informações da categoria.");
         }
