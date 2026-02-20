@@ -6,6 +6,8 @@ import com.mfinancas.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class CategoriaService extends SuperServiceSave<Categoria, CategoriaRepository> {
     @Autowired
@@ -18,8 +20,8 @@ public class CategoriaService extends SuperServiceSave<Categoria, CategoriaRepos
         super(repository);
     }
 
-    public CategoriaTO createCategoria(CategoriaTO categoriaTO) {
-        validateCategoria.validarCategoriaRequest(categoriaTO);
+    public CategoriaTO createCategoria(CategoriaTO categoriaTO, UUID usuarioFK) {
+        validateCategoria.validarCategoriaRequest(categoriaTO, usuarioFK);
         Categoria categoria = new Categoria(categoriaTO);
         return new CategoriaTO(saveAndFlush(categoria));
     }

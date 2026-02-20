@@ -6,6 +6,7 @@ import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 public class Receita extends AbstractEntity {
@@ -23,4 +24,6 @@ public class Receita extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
+
+    private UUID usuarioFK;
 }

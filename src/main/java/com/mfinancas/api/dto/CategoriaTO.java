@@ -5,13 +5,14 @@ import com.mfinancas.api.model.Categoria;
 
 import java.util.UUID;
 
-public record CategoriaTO(UUID uuidCategoria, String descricao, TipoCategoria tipo) {
+public record CategoriaTO(UUID uuidCategoria, String descricao, TipoCategoria tipo, UUID usuarioFK) {
 
     public CategoriaTO(Categoria categoria) {
         this(
                 categoria.getUuid(),
                 categoria.getNome(),
-                categoria.getTipo()
+                categoria.getTipo(),
+                categoria.getUsuarioFK()
         );
     }
 };

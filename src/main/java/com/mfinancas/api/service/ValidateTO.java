@@ -13,8 +13,5 @@ public class ValidateTO {
         if (usuarioTO.senha() == null || usuarioTO.senha().isBlank()) {
             throw new FailedConditional("Obrigatório informar senha.");
         }
-        if (usuarioTO.nome().isBlank()) {
-            throw new FailedConditional("Obrigatório informar descricao.");
-        }
     }
 }

@@ -10,5 +10,6 @@ public record DespesaTO(
         BigDecimal valor,
         LocalDate dataVencimento,
         Boolean pago,
-        CategoriaTO categoria) {
+        CategoriaTO categoria,
+        UUID usuarioFK) {
 }
