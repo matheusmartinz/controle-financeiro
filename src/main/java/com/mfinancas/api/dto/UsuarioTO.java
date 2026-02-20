@@ -4,12 +4,12 @@ import com.mfinancas.api.model.Usuario;
 
 import java.util.UUID;
 
-public record UsuarioTO(UUID uuidUsuario,
+public record UsuarioTO(UUID uuid,
                         String email,
                         String senha) {
 
 
     public UsuarioTO(Usuario usuario) {
-        this(usuario.getUuid(), usuario.getEmail(), usuario.getSenha());
+        this(usuario.getUuid(), usuario.getEmail(), "SEGREDO");
     }
 }

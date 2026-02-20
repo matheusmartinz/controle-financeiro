@@ -14,13 +14,9 @@ public class CategoriaRestController {
     @Autowired
     private CategoriaService categoriaService;
 
-    @PostMapping("/create/{uuidUser}")
-    public ResponseEntity<CategoriaTO> createCategoria(@RequestBody CategoriaTO categoriaTO, @PathVariable UUID uuidUser) {
-        return ResponseEntity.ok(categoriaService.createCategoria(categoriaTO, uuidUser));
+    @PostMapping("/create/{uuidUsuario}")
+    public ResponseEntity<CategoriaTO> createCategoria(@RequestBody CategoriaTO categoriaTO, @PathVariable UUID uuidUsuario) {
+        return ResponseEntity.ok(categoriaService.createCategoria(categoriaTO, uuidUsuario));
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<CategoriaTO>> findAll() {
-//        return ResponseEntity.ok(categoriaService.getAllCategorias());
-//    }
 }

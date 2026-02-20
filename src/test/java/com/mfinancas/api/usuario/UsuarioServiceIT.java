@@ -19,16 +19,16 @@ public class UsuarioServiceIT {
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository UsuarioRepository;
 
     @Test
     public void createUsuario() {
         UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
-        int before = usuarioRepository.findAll().size();
+        int before = UsuarioRepository.findAll().size();
 
         UsuarioTO usuarioResponse = usuarioService.createUsuario(usuarioTO);
 
-        int after = usuarioRepository.findAll().size();
+        int after = UsuarioRepository.findAll().size();
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(usuarioResponse.senha()).isNotEqualTo(null);

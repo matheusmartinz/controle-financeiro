@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 public class ValidateTO {
 
     public void validateUsuarioTO(UsuarioTO usuarioTO) {
+        if( usuarioTO.senha().isBlank() &&  usuarioTO.email().isBlank()){
+            throw new FailedConditional("Obrigatório inserir todos os campos.");
+        }
         ValidateEmail.validaEmail(usuarioTO.email());
         if (usuarioTO.senha() == null || usuarioTO.senha().isBlank()) {
             throw new FailedConditional("Obrigatório informar senha.");

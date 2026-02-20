@@ -26,8 +26,9 @@ public class UsuarioRestController {
         return ResponseEntity.ok(usuarioService.getAll());
     }
 
-    @PostMapping("/login/{uuidUsuario}")
-    public ResponseEntity<String> login (@RequestBody UsuarioTO usuarioTO, @PathVariable String uuidUsuario) {
-        return ResponseEntity.ok().body("Login realizado com sucesso");
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTO> login(@RequestBody UsuarioTO usuarioTO) {
+        UsuarioTO toReturnUsuario = usuarioService.postLogin(usuarioTO);
+        return ResponseEntity.ok().body(toReturnUsuario);
     }
 }

@@ -34,7 +34,7 @@ public class CategoriaServiceIT {
                 UUID.randomUUID(),
                 "Lazer",
                 TipoCategoria.DESPESA,
-                usuarioResponse.uuidUsuario()
+                usuarioResponse.uuid()
         );
         long before = categoriaRepository.count();
 
