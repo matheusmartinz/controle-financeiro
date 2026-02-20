@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class SuperServiceSave<T, R extends JpaRepository<T, UUID>> {
+public class SuperServiceSave<T, R extends JpaRepository<T, Long>> {
 
     private final R repository;
 

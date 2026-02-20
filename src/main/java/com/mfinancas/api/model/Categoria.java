@@ -22,10 +22,10 @@ public class Categoria extends AbstractEntity {
     private UUID usuarioFK;
 
 
-    public Categoria(CategoriaTO categoriaTO) {
+    public Categoria(CategoriaTO categoriaTO, UUID uuidUsuario) {
         super();
         this.nome = categoriaTO.descricao();
         this.tipo = categoriaTO.tipo();
-        this.usuarioFK = categoriaTO.usuarioFK();
+        this.usuarioFK = uuidUsuario;
     }
 }

@@ -17,9 +17,15 @@ public class ValidateCategoriaTO {
     @Autowired
     private final UsuarioRepository usuarioRepository;
 
-    public void validarCategoriaRequest(CategoriaTO categoriaTO, UUID usuarioFK) {
-        if (usuarioRepository.findById(usuarioFK).isEmpty()) {
+    @Autowired
+    private final CategoriaRepository categoriaRepository;
+
+    public void validarCategoriaRequest(CategoriaTO categoriaTO, UUID uuidUsuario) {
+        if (usuarioRepository.findByUuid(uuidUsuario) == null) {
             throw new IsNull("Usuário não encontrado");
+        }
+        if (categoriaRepository.existsByNome(categoriaTO.descricao())) {
+            throw new FailedConditional("Já existe um nome cadastrado com essa categoria.");
         }
         if (categoriaTO == null) {
             throw new IsNull("Obrigatório inserir as informações da categoria.");
