@@ -43,7 +43,7 @@ public class CategoriaServiceIT {
         long after = categoriaRepository.count();
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThat(toResponseCategoria.descricao()).isNotNull();
+            s.assertThat(toResponseCategoria.nome()).isNotNull();
             s.assertThat(toResponseCategoria.tipo()).isEqualTo(TipoCategoria.DESPESA);
             s.assertThat(after).isEqualTo(before + 1);
         });

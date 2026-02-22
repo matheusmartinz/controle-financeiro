@@ -24,7 +24,7 @@ public class Categoria extends AbstractEntity {
 
     public Categoria(CategoriaTO categoriaTO, UUID uuidUsuario) {
         super();
-        this.nome = categoriaTO.descricao();
+        this.nome = categoriaTO.nome();
         this.tipo = categoriaTO.tipo();
         this.usuarioFK = uuidUsuario;
     }

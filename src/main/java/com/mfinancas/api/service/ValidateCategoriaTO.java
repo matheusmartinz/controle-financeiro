@@ -24,13 +24,13 @@ public class ValidateCategoriaTO {
         if (usuarioRepository.findByUuid(uuidUsuario) == null) {
             throw new IsNull("Usuário não encontrado");
         }
-        if (categoriaRepository.existsByNome(categoriaTO.descricao())) {
+        if (categoriaRepository.existsByNome(categoriaTO.nome())) {
             throw new FailedConditional("Já existe um nome cadastrado com essa categoria.");
         }
         if (categoriaTO == null) {
             throw new IsNull("Obrigatório inserir as informações da categoria.");
         }
-        if (categoriaTO.descricao().isEmpty()) {
+        if (categoriaTO.nome().isEmpty()) {
             throw new FailedConditional("Obrigatório informar o descricao do categoriaTO.");
         }
         if (categoriaTO.tipo() == null) {
