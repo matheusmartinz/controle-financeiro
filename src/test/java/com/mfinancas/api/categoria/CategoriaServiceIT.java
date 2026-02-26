@@ -1,7 +1,7 @@
 package com.mfinancas.api.categoria;
 
 import com.mfinancas.api.TipoCategoria;
-import com.mfinancas.api.dataprovider.UsuarioCreateDataProvider;
+import com.mfinancas.api.dataprovider.UsuarioDataProvider;
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.service.CategoriaRepository;
@@ -24,15 +24,15 @@ public class CategoriaServiceIT {
     CategoriaService categoriaService;
 
     @Autowired
-    UsuarioCreateDataProvider  usuarioCreateDataProvider;
+    UsuarioDataProvider usuarioDataProvider;
 
     @Test
     public void createCategoria() {
-        UsuarioTO usuarioResponse = usuarioCreateDataProvider.createUsuarioTO();
+        UsuarioTO usuarioResponse = usuarioDataProvider.createUsuarioTO();
 
         CategoriaTO categoriaTO = new CategoriaTO(
                 UUID.randomUUID(),
-                "Lazer",
+                "Moto",
                 TipoCategoria.DESPESA,
                 usuarioResponse.uuid()
         );

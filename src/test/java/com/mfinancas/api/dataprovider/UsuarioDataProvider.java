@@ -8,18 +8,17 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class UsuarioCreateDataProvider {
+public class UsuarioDataProvider {
     @Autowired
     private UsuarioService usuarioService;
 
-    UsuarioTO usuarioTO = new UsuarioTO(
-            UUID.randomUUID(),
-            "jorge@gmail.com",
-            "jorge123"
-
-    );
-
     public UsuarioTO createUsuarioTO() {
+        UsuarioTO usuarioTO = new UsuarioTO(
+                UUID.randomUUID(),
+                "jorge@gmail.com",
+                "jorge123"
+
+        );
         return usuarioService.createUsuario(usuarioTO);
     }
 }

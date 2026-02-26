@@ -1,5 +1,6 @@
 package com.mfinancas.api.service;
 
+import com.mfinancas.api.controller.ValidateUsuario;
 import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Usuario;
@@ -13,7 +14,7 @@ import java.util.List;
 @Service
 public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository> {
     @Autowired
-    private ValidateTO validateTO;
+    private ValidateUsuario validateUsuario;
 
     @Autowired
     private UsuarioRepositoryCustomImpl usuarioRepositoryCustomImpl;
@@ -26,13 +27,13 @@ public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository>
     }
 
     public UsuarioTO createUsuario(UsuarioTO usuarioTO) {
-        validateTO.validateUsuarioTO(usuarioTO);
+        validateUsuario.validateUsuarioTO(usuarioTO);
         Usuario usuario = new Usuario(usuarioTO);
         return new UsuarioTO(save(usuario));
     }
 
     public UsuarioTO postLogin(UsuarioTO usuarioTO) {
-        validateTO.validateUsuarioTO(usuarioTO);
+        validateUsuario.validateUsuarioTO(usuarioTO);
         Usuario userEntity = usuarioRepositoryCustomImpl.findByUser(usuarioTO);
         if (userEntity == null) {
             throw new IsNull("Credenciais incorretos.");

@@ -1,5 +1,6 @@
 package com.mfinancas.api.service;
 
+import com.mfinancas.api.controller.ValidateCategoria;
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.model.Categoria;
 import org.jspecify.annotations.Nullable;
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Service
 public class CategoriaService extends SuperServiceSave<Categoria, CategoriaRepository> {
     @Autowired
-    private ValidateCategoriaTO validateCategoria;
+    private ValidateCategoria validateCategoria;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
