@@ -1,5 +1,7 @@
 package com.mfinancas.api.dto;
 
+import com.mfinancas.api.model.Despesa;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -10,6 +12,17 @@ public record DespesaTO(
         BigDecimal valor,
         LocalDate dataVencimento,
         Boolean pago,
-        CategoriaTO categoria,
-        UUID usuarioFK) {
+        UUID categoriaFK,
+        UUID usuarioFK
+) {
+
+    public DespesaTO(Despesa despesa) {
+        this(despesa.getUuid(),
+                despesa.getDescricao(),
+                despesa.getValor(),
+                despesa.getDataVencimento(),
+                despesa.getPago(),
+                despesa.getCategoriaFK(),
+                despesa.getUsuarioFK());
+    }
 }

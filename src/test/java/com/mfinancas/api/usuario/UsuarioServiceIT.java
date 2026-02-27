@@ -18,6 +18,7 @@ public class UsuarioServiceIT {
 
     @Autowired
     private UsuarioService usuarioService;
+
     @Autowired
     private UsuarioRepository UsuarioRepository;
 

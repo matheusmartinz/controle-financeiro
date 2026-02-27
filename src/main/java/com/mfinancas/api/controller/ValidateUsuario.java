@@ -1,4 +1,4 @@
-package com.mfinancas.api.service;
+package com.mfinancas.api.controller;
 
 import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.exceptions.FailedConditional;
@@ -6,7 +6,7 @@ import com.mfinancas.api.utils.ValidateEmail;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidateTO {
+public class ValidateUsuario {
 
     public void validateUsuarioTO(UsuarioTO usuarioTO) {
         if( usuarioTO.senha().isBlank() &&  usuarioTO.email().isBlank()){

@@ -1,9 +1,10 @@
-package com.mfinancas.api.service;
+package com.mfinancas.api.controller;
 
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.repository.UsuarioRepository;
+import com.mfinancas.api.service.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ValidateCategoriaTO {
+public class ValidateCategoria {
 
     @Autowired
     private final UsuarioRepository usuarioRepository;
