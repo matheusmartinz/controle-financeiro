@@ -5,6 +5,7 @@ import com.mfinancas.api.dto.DespesaTO;
 import com.mfinancas.api.repository.DespesaRepository;
 import com.mfinancas.api.service.DespesaService;
 import jakarta.transaction.Transactional;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,10 +15,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -80,6 +85,36 @@ public class DespesaRestControllerIT {
 
         despesaDataProvider.createDespesaCustom("Toyota", "Troca de correia");
 
+    }
+
+    @Test
+    public void putDespesa() throws Exception {
+        despesaRepository.deleteAll();
+
+        long before = despesaRepository.count();
+        DespesaTO despesaResponse = despesaDataProvider.createDespesaCustom("Filha", "Balé");
+        long after = despesaRepository.count();
+
+        DespesaTO despesaUpdate = new DespesaTO(despesaResponse.uuidDespesa(), "Pneu", BigDecimal.valueOf(500),
+                LocalDate.now().plusDays(20),false, despesaResponse.categoriaFK(), despesaResponse.usuarioFK());
+
+        long afterUpdate = despesaRepository.count();
+
+        String despesaUpdateJSON = objectMapper.writeValueAsString(despesaUpdate);
+
+        mockMvc.perform(put("/despesa/editar/" + despesaUpdate.uuidDespesa()).contentType(MediaType.APPLICATION_JSON)
+                        .content(despesaUpdateJSON).accept(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.categoriaFK").value(despesaUpdate.categoriaFK().toString()))
+                .andExpect(jsonPath("$.descricao").value("Pneu"))
+                .andExpect(jsonPath("$.uuidDespesa").value(despesaUpdate.uuidDespesa().toString()))
+                .andExpect(jsonPath("$.dataVencimento").value(LocalDate.now().plusDays(20).toString()));
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThat(after).isEqualTo(before + 1);
+            s.assertThat(afterUpdate).isEqualTo(after);
+        });
     }
 
 }

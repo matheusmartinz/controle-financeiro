@@ -14,11 +14,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,6 +42,9 @@ public class CategoriaRestControllerIT {
     @Autowired
     private UsuarioDataProvider usuarioDataProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     public void getCategorias() throws Exception {
         categoriaRepository.deleteAll();
@@ -60,7 +65,7 @@ public class CategoriaRestControllerIT {
     }
 
     @Test
-    void findAllCategoriasResponseVazio() throws Exception {
+    public void findAllCategoriasResponseVazio() throws Exception {
         categoriaRepository.deleteAll();
 
         mockMvc.perform(get("/categoria")
@@ -68,4 +73,17 @@ public class CategoriaRestControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
+
+//    @Test
+//    public void postCategoria() throws Exception {
+//        categoriaRepository.deleteAll();
+//        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
+//        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+//
+//        String categoriaRequest = objectMapper.writeValueAsString(categoriaTO);
+//
+//        mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.")) VALIDAR O POST
+//    }
 }
