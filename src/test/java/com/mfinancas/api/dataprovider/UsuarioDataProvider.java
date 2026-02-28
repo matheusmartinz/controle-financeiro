@@ -21,4 +21,14 @@ public class UsuarioDataProvider {
         );
         return usuarioService.createUsuario(usuarioTO);
     }
+
+    public UsuarioTO createUsuarioCustom(String email, String senha) {
+        UsuarioTO usuarioTO = new UsuarioTO(
+                UUID.randomUUID(),
+                email,
+                senha
+        );
+
+        return usuarioService.createUsuario(usuarioTO);
+    }
 }

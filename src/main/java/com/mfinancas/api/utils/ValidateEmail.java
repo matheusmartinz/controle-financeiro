@@ -1,5 +1,8 @@
 package com.mfinancas.api.utils;
 
+import com.mfinancas.api.exceptions.FailedConditional;
+import com.mfinancas.api.exceptions.IsNull;
+
 import java.util.regex.Pattern;
 
 public final class ValidateEmail {
@@ -13,11 +16,11 @@ public final class ValidateEmail {
     public static void validaEmail(String email) {
 
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("E-mail não pode ser vazio");
+            throw new IsNull("Obrigatório informar email.");
         }
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new IllegalArgumentException("E-mail inválido");
+            throw new FailedConditional("E-mail inválido.");
         }
     }
 }
