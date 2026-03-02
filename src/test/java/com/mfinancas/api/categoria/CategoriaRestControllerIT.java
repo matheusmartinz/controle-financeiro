@@ -20,8 +20,8 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
@@ -74,16 +74,18 @@ public class CategoriaRestControllerIT {
                 .andExpect(jsonPath("$", hasSize(0)));
     }
 
-//    @Test
-//    public void postCategoria() throws Exception {
-//        categoriaRepository.deleteAll();
-//        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
-//        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
-//
-//        String categoriaRequest = objectMapper.writeValueAsString(categoriaTO);
-//
-//        mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.")) VALIDAR O POST
-//    }
+    @Test
+    public void postCategoria() throws Exception {
+        categoriaRepository.deleteAll();
+        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
+        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+
+        String categoriaRequest = objectMapper.writeValueAsString(categoriaTO);
+
+        mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Teste1"))
+                .andExpect(jsonPath("$.tipo").value("DESPESA"))
+                .andExpect(jsonPath("$.usuarioFK").value(usuario.uuid().toString()));
+    }
 }

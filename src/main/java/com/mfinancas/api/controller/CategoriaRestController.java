@@ -25,4 +25,15 @@ public class CategoriaRestController {
         return ResponseEntity.ok(categoriaService.getAllCategorias());
     }
 
+    @PutMapping("/edit/{uuidCategoria}")
+    public ResponseEntity<CategoriaTO> updateCategoria(@RequestBody CategoriaTO categoriaTO, @PathVariable UUID uuidCategoria) {
+        return ResponseEntity.ok(categoriaService.updateCategoria(categoriaTO, uuidCategoria));
+    }
+
+    @DeleteMapping("/delete/{uuidCategoria}")
+    public ResponseEntity<Void> deleteCategoria(@PathVariable UUID uuidCategoria) {
+        categoriaService.deleteCategoria(uuidCategoria);
+        return ResponseEntity.ok().build();
+    }
+
 }

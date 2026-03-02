@@ -2,6 +2,7 @@ package com.mfinancas.api.service;
 
 import com.mfinancas.api.controller.ValidateCategoria;
 import com.mfinancas.api.dto.CategoriaTO;
+import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Categoria;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,22 @@ public class CategoriaService extends SuperServiceSave<Categoria, CategoriaRepos
     public @Nullable List<CategoriaTO> getAllCategorias() {
         List<Categoria> toReturnEntity = categoriaRepository.findAll();
         return toReturnEntity.stream().map(CategoriaTO::new).toList();
+    }
+
+    public CategoriaTO updateCategoria(CategoriaTO categoriaTO, UUID uuidCategoria) {
+        Categoria entity = categoriaRepository.findByUuid(uuidCategoria);
+        if (entity == null) {
+            throw new IsNull("Categoria não encontrada.");
+        }
+        validateCategoria.validarCategoriaRequest(categoriaTO, categoriaTO.usuarioFK());
+        entity.updateCategoria(categoriaTO.nome(), categoriaTO.tipo());
+        return new CategoriaTO(categoriaRepository.save(entity));
+    }
+
+    public void deleteCategoria(UUID uuidCategoria) {
+        if (categoriaRepository.findByUuid(uuidCategoria) == null) {
+            throw new IsNull("Categoria não encontrada.");
+        }
+        categoriaRepository.deleteByUuid(uuidCategoria);
     }
 }

@@ -23,19 +23,16 @@ public class ValidateCategoria {
 
     public void validarCategoriaRequest(CategoriaTO categoriaTO, UUID uuidUsuario) {
         if (usuarioRepository.findByUuid(uuidUsuario) == null) {
-            throw new IsNull("Usuário não encontrado");
+            throw new IsNull("Usuário não encontrado.");
         }
         if (categoriaRepository.existsByNome(categoriaTO.nome())) {
             throw new FailedConditional("Já existe um nome cadastrado com essa categoria.");
         }
-        if (categoriaTO == null) {
-            throw new IsNull("Obrigatório inserir as informações da categoria.");
-        }
         if (categoriaTO.nome().isEmpty()) {
-            throw new FailedConditional("Obrigatório informar o descricao do categoriaTO.");
+            throw new FailedConditional("Obrigatório informar o descricao da categoria.");
         }
         if (categoriaTO.tipo() == null) {
-            throw new FailedConditional("Obrigatório informar o  tipo do categoriaTO.");
+            throw new FailedConditional("Obrigatório informar o  tipo da categoria.");
         }
     }
 }

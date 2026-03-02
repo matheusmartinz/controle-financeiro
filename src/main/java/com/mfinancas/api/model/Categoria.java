@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -27,5 +28,10 @@ public class Categoria extends AbstractEntity {
         this.nome = categoriaTO.nome();
         this.tipo = categoriaTO.tipo();
         this.usuarioFK = uuidUsuario;
+    }
+
+    public void updateCategoria(String nome, TipoCategoria tipo) {
+        this.nome = nome;
+        this.tipo = tipo;
     }
 }

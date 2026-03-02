@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface DespesaRepository extends JpaRepository<Despesa, Long> {
     Despesa findByUuid(UUID uuid);
+
+    void deleteByUuid(UUID uuidDespesa);
 }

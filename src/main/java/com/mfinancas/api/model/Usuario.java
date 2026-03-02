@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class Usuario extends AbstractEntity {
-
     private String email;
-
     private String senha;
 
     public Usuario(UsuarioTO usuarioTO) {

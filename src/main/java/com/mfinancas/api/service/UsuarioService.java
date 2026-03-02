@@ -22,6 +22,7 @@ public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository>
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
     public UsuarioService(UsuarioRepository repository) {
         super(repository);
     }

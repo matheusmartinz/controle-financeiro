@@ -42,16 +42,18 @@ public class DespesaService extends SuperServiceSave<Despesa, DespesaRepository>
 
     public DespesaTO updateDespesa(DespesaTO despesaTO, UUID uuidDespesa) {
         Despesa entity = despesaRepository.findByUuid(uuidDespesa);
-
-        if (usuarioRepository.findByUuid(despesaTO.usuarioFK()) == null) {
-            throw new IsNull("Usuário não encontrado.");
-        }
-        if (despesaRepository.findByUuid(uuidDespesa) == null) {
+        if (entity == null) {
             throw new IsNull("Despesa não encontrada.");
         }
-
+        validateDespesa.validaDespesaTO(despesaTO);
         entity.updateDespesa(despesaTO);
-
         return new DespesaTO(despesaRepository.save(entity));
+    }
+
+    public void deleteDespesa(UUID uuidDespesa) {
+        if(despesaRepository.findByUuid(uuidDespesa) == null){
+            throw new IsNull("Despesa não encontrada.");
+        }
+        despesaRepository.deleteByUuid(uuidDespesa);
     }
 }

@@ -2,13 +2,17 @@ package com.mfinancas.api.despesa;
 
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.DespesaDataProvider;
+import com.mfinancas.api.dataprovider.UsuarioDataProvider;
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Despesa;
 import com.mfinancas.api.repository.DespesaRepository;
 import com.mfinancas.api.service.DespesaService;
+import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,9 @@ public class DespesaServiceIT {
 
     @Autowired
     private DespesaService despesaService;
+
+    @Autowired
+    private UsuarioDataProvider usuarioDataProvider;
 
     @Test
     public void createDespesa() {
@@ -70,6 +77,20 @@ public class DespesaServiceIT {
         CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Carro");
 
         DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), null, BigDecimal.valueOf(450), LocalDate.now(),
+                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+                    .isInstanceOf(FailedConditional.class)
+                    .hasMessage("Favor informar a descrição.");
+        });
+    }
+
+    @Test
+    public void createDespesaDescricaoIsEmpty() {
+        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Carro2");
+
+        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "", BigDecimal.valueOf(450), LocalDate.now(),
                 false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
 
         SoftAssertions.assertSoftly(s -> {
@@ -188,6 +209,49 @@ public class DespesaServiceIT {
             s.assertThat(entidadeAtualizada.isPago()).isEqualTo(true);
             s.assertThat(entidadeAtualizada.isAtrasado()).isEqualTo(false);
             s.assertThat(entidadeAtualizada.isEmDia()).isEqualTo(false);
+        });
+    }
+
+    @Test
+    @SneakyThrows
+    public void updateDespesaIsNull(){
+        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Outros");
+        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        despesaDataProvider.createDespesaCustom("Viajens", "Horlando");
+
+        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "surpresa niver", BigDecimal.valueOf(200), LocalDate.now().plusDays(15),false, categoriaTO.uuidCategoria(), usuarioTO.uuid());
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> despesaService.updateDespesa(despesaTO, despesaTO.uuidDespesa())).isInstanceOf(IsNull.class)
+                    .hasMessage("Despesa não encontrada.");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void deleteDespesa(){
+        despesaRepository.deleteAll();
+        DespesaTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra", "Buque");
+        long afterCreated = despesaRepository.count();
+        despesaService.deleteDespesa(despesaCreated.uuidDespesa());
+        long afterDeleted = despesaRepository.count();
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThat(afterCreated).isEqualTo(1);
+            s.assertThat(afterDeleted).isEqualTo(0);
+        });
+    }
+
+    @Test
+    @Transactional
+    public void deleteDespesaIsNull(){
+        despesaRepository.deleteAll();
+        DespesaTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra2", "Buque");
+
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> despesaService.deleteDespesa(null)).isInstanceOf(IsNull.class)
+                    .hasMessage("Despesa não encontrada.");
         });
     }
 }

@@ -77,8 +77,28 @@ public class UsuarioServiceIT {
 
     @Test
     @SneakyThrows
+    public void requestSenhaIsEmpty(){
+        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "email@gmail.com", "");
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioTO)).isInstanceOf(FailedConditional.class).hasMessage("Obrigatório informar senha.");
+        });
+    }
+
+    @Test
+    @SneakyThrows
     public void requestEmailIsNull(){
         UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), null, "teste123");
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioTO)).isInstanceOf(IsNull.class).hasMessage("Obrigatório informar email.");
+        });
+    }
+
+    @Test
+    @SneakyThrows
+    public void requestEmailIsBlank(){
+        UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "", "teste123");
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioTO)).isInstanceOf(IsNull.class).hasMessage("Obrigatório informar email.");
