@@ -4,6 +4,7 @@ import com.mfinancas.api.dataprovider.ReceitaDataProvider;
 import com.mfinancas.api.dto.ReceitaTO;
 import com.mfinancas.api.model.Receita;
 import com.mfinancas.api.repository.ReceitaRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +16,13 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -78,5 +81,24 @@ public class ReceitaRestControllerIT {
                 .andExpect(jsonPath("$.descricao").value("Garcom de sexta"))
                 .andExpect(jsonPath("$.uuidReceita").value(receita.getUuid().toString()))
                 .andExpect(jsonPath("$.categoriaFK").value(receita.getCategoriaFK().toString()));
+    }
+
+    @Test
+    @Transactional
+    public void deleteReceita() throws Exception {
+        ReceitaTO receitaTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha6");
+
+        mockMvc.perform(delete("/receita/delete/" + receitaTO.uuidReceita()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Receita deletada com sucesso."));
+    }
+
+    @Test
+    public void deleteReceitaIsNull() throws Exception {
+        UUID uuidFake = UUID.randomUUID();
+
+        mockMvc.perform(delete("/receita/delete/" + uuidFake))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Receita não encontrada."));
     }
 }

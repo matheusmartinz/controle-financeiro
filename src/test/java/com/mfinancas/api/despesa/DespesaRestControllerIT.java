@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -115,6 +116,16 @@ public class DespesaRestControllerIT {
             s.assertThat(after).isEqualTo(before + 1);
             s.assertThat(afterUpdate).isEqualTo(after);
         });
+    }
+
+    @Test
+    public void deleteDespesa() throws Exception{
+        despesaRepository.deleteAll();
+        DespesaTO despesaCriadaSalva = despesaDataProvider.createDespesaCustom("testeDeletin", "despesaDeletada");
+
+        mockMvc.perform(delete("/despesa/delete/" + despesaCriadaSalva.uuidDespesa()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Deletado com sucesso."));
     }
 
 }

@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -111,5 +112,15 @@ public class UsuarioRestControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Credenciais incorretos."));
+    }
+
+    @Test
+    public void deleteUsuario() throws Exception{
+        usuarioRepository.deleteAll();
+        UsuarioTO usuarioSave = usuarioDataProvider.createUsuarioCustom("deleteUsu@gmail.com", "delete123");
+
+        mockMvc.perform(delete("/controle-financeiro/delete-usuario/" + usuarioSave.uuid()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Usuário deletado com sucesso."));
     }
 }

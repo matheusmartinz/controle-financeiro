@@ -32,9 +32,9 @@ public class DespesaRestController {
         return ResponseEntity.ok(despesaService.updateDespesa(despesaTO, uuidDespesa));
     }
 
-    @DeleteMapping("{uuidDespesa}")
-    public ResponseEntity<Void> deleteDespesa(@PathVariable UUID uuidDespesa){
+    @DeleteMapping("/delete/{uuidDespesa}")
+    public ResponseEntity<String> deleteDespesa(@PathVariable UUID uuidDespesa){
         despesaService.deleteDespesa(uuidDespesa);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Deletado com sucesso.");
     }
 }

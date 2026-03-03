@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface ReceitaRepository extends JpaRepository<Receita, Long> {
     Receita findByUuid(UUID uuid);
+
+    void deleteByUuid(UUID uuidReceita);
 }

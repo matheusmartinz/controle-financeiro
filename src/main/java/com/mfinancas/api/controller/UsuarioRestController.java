@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("controle-financeiro")
@@ -30,5 +31,11 @@ public class UsuarioRestController {
     public ResponseEntity<UsuarioTO> login(@RequestBody UsuarioTO usuarioTO) {
         UsuarioTO toReturnUsuario = usuarioService.postLogin(usuarioTO);
         return ResponseEntity.ok().body(toReturnUsuario);
+    }
+
+    @DeleteMapping("/delete-usuario/{uuidUser}")
+    public ResponseEntity<String> deleteUser(@PathVariable UUID uuidUser){
+        usuarioService.deleteUsuario(uuidUser);
+        return ResponseEntity.ok().body("Usuário deletado com sucesso.");
     }
 }

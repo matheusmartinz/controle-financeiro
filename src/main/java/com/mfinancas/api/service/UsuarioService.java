@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository> {
@@ -45,5 +46,12 @@ public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository>
     public List<UsuarioTO> getAll() {
         List<Usuario> listUsers = usuarioRepository.findAll();
         return listUsers.stream().map(UsuarioTO::new).toList();
+    }
+
+    public void deleteUsuario(UUID uuidUser) {
+        if (usuarioRepository.findByUuid(uuidUser) == null) {
+            throw new IsNull("Usuário não encontrado.");
+        }
+        usuarioRepository.deleteByUuid(uuidUser);
     }
 }

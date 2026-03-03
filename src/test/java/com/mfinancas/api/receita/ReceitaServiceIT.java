@@ -12,6 +12,7 @@ import com.mfinancas.api.model.Receita;
 import com.mfinancas.api.repository.ReceitaRepository;
 import com.mfinancas.api.repository.UsuarioRepository;
 import com.mfinancas.api.service.ReceitaService;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -187,5 +188,31 @@ public class ReceitaServiceIT {
             s.assertThatThrownBy(() -> receitaService.updateReceita(receitaTO, receitaTO.uuidReceita())).isInstanceOf(IsNull.class)
                     .hasMessage("Receita não encontrada.");
         });
+    }
+
+    @Test
+    @Transactional
+    public void deleteReceita(){
+        receitaRepository.deleteAll();
+        ReceitaTO receitaSalva = receitaDataProvider.createReceitaCustom("Piloto de Avião", BigDecimal.valueOf(1500), LocalDate.now(), "Dinheiro da pinga");
+        long afterSave = receitaRepository.count();
+
+        receitaService.deleteReceita(receitaSalva.uuidReceita());
+        long afterDelete = receitaRepository.count();
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThat(afterSave).isEqualTo(1);
+            s.assertThat(afterDelete).isEqualTo(0);
+        });
+    }
+
+    @Test
+    public void deleteReceitaIsNull(){
+       UUID fakeUUID = UUID.randomUUID();
+
+       SoftAssertions.assertSoftly(s -> {
+           s.assertThatThrownBy(() -> receitaService.deleteReceita(fakeUUID)).isInstanceOf(IsNull.class)
+                   .hasMessage("Receita não encontrada.");
+       });
     }
 }

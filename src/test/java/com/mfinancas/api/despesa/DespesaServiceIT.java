@@ -214,12 +214,12 @@ public class DespesaServiceIT {
 
     @Test
     @SneakyThrows
-    public void updateDespesaIsNull(){
+    public void updateDespesaIsNull() {
         CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Outros");
         UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
         despesaDataProvider.createDespesaCustom("Viajens", "Horlando");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "surpresa niver", BigDecimal.valueOf(200), LocalDate.now().plusDays(15),false, categoriaTO.uuidCategoria(), usuarioTO.uuid());
+        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "surpresa niver", BigDecimal.valueOf(200), LocalDate.now().plusDays(15), false, categoriaTO.uuidCategoria(), usuarioTO.uuid());
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> despesaService.updateDespesa(despesaTO, despesaTO.uuidDespesa())).isInstanceOf(IsNull.class)
@@ -229,7 +229,7 @@ public class DespesaServiceIT {
 
     @Test
     @Transactional
-    public void deleteDespesa(){
+    public void deleteDespesa() {
         despesaRepository.deleteAll();
         DespesaTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra", "Buque");
         long afterCreated = despesaRepository.count();
@@ -244,10 +244,8 @@ public class DespesaServiceIT {
 
     @Test
     @Transactional
-    public void deleteDespesaIsNull(){
+    public void deleteDespesaIsNull() {
         despesaRepository.deleteAll();
-        DespesaTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra2", "Buque");
-
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> despesaService.deleteDespesa(null)).isInstanceOf(IsNull.class)

@@ -31,9 +31,9 @@ public class CategoriaRestController {
     }
 
     @DeleteMapping("/delete/{uuidCategoria}")
-    public ResponseEntity<Void> deleteCategoria(@PathVariable UUID uuidCategoria) {
+    public ResponseEntity<String> deleteCategoria(@PathVariable UUID uuidCategoria) {
         categoriaService.deleteCategoria(uuidCategoria);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Deletado com sucesso.");
     }
 
 }

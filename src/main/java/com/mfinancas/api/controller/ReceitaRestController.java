@@ -3,6 +3,7 @@ package com.mfinancas.api.controller;
 import com.mfinancas.api.dto.ReceitaTO;
 import com.mfinancas.api.service.ReceitaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,5 +30,11 @@ public class ReceitaRestController {
     @PutMapping("/edit/{uuidReceita}")
     public ResponseEntity<ReceitaTO> updateReceita(@RequestBody ReceitaTO receitaTO, @PathVariable UUID uuidReceita){
         return ResponseEntity.ok(receitaService.updateReceita(receitaTO, uuidReceita));
+    }
+
+    @DeleteMapping("/delete/{uuidReceita}")
+    public ResponseEntity<String> deleteReceita(@PathVariable UUID uuidReceita){
+        receitaService.deleteReceita(uuidReceita);
+        return ResponseEntity.ok().body("Receita deletada com sucesso.");
     }
 }

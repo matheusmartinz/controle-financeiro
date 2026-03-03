@@ -42,4 +42,12 @@ public class ReceitaService extends SuperServiceSave<Receita, ReceitaRepository>
         receita.atualizarReceita(receitaTO.descricao(), receitaTO.valor(), receitaTO.data(), receitaTO.categoriaFK());
         return new ReceitaTO(receitaRepository.save(receita));
     }
+
+    public void deleteReceita(UUID uuidReceita) {
+        Receita receita = receitaRepository.findByUuid(uuidReceita);
+        if (receita == null){
+            throw new IsNull("Receita não encontrada.");
+        }
+        receitaRepository.deleteByUuid(uuidReceita);
+    }
 }

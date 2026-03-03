@@ -1,6 +1,7 @@
 package com.mfinancas.api.categoria;
 
 import com.mfinancas.api.TipoCategoria;
+import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
 import com.mfinancas.api.dto.CategoriaTO;
 import com.mfinancas.api.dto.UsuarioTO;
@@ -22,6 +23,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
@@ -38,6 +41,9 @@ public class CategoriaRestControllerIT {
 
     @Autowired
     private CategoriaService categoriaService;
+
+    @Autowired
+    private CategoriaDataProvider categoriaDataProvider;
 
     @Autowired
     private UsuarioDataProvider usuarioDataProvider;
@@ -87,5 +93,30 @@ public class CategoriaRestControllerIT {
                 .andExpect(jsonPath("$.nome").value("Teste1"))
                 .andExpect(jsonPath("$.tipo").value("DESPESA"))
                 .andExpect(jsonPath("$.usuarioFK").value(usuario.uuid().toString()));
+    }
+
+    @Test
+    public void putCategoria() throws Exception{
+        categoriaRepository.deleteAll();
+        CategoriaTO categoriaSaved = categoriaDataProvider.createCategoria("qualquerCoisa");
+        CategoriaTO categoriaTO = new CategoriaTO(categoriaSaved.uuidCategoria(), "Teste1", TipoCategoria.RECEITA, categoriaSaved.usuarioFK());
+
+        String categoriaJSON = objectMapper.writeValueAsString(categoriaTO);
+
+        mockMvc.perform(put("/categoria/edit/" + categoriaSaved.uuidCategoria()).contentType(MediaType.APPLICATION_JSON).content(categoriaJSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Teste1"))
+                .andExpect(jsonPath("$.tipo").value("RECEITA"))
+                .andExpect(jsonPath("$.usuarioFK").value(categoriaSaved.usuarioFK().toString()));
+    }
+
+    @Test
+    public void deleteCategoria() throws Exception {
+        categoriaRepository.deleteAll();
+        CategoriaTO categoriaCriada = categoriaDataProvider.createCategoria("testeDelete");
+
+        mockMvc.perform(delete("/categoria/delete/" + categoriaCriada.uuidCategoria()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Deletado com sucesso."));
     }
 }

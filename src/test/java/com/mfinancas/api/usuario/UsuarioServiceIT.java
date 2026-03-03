@@ -1,10 +1,12 @@
 package com.mfinancas.api.usuario;
 
+import com.mfinancas.api.dataprovider.UsuarioDataProvider;
 import com.mfinancas.api.dto.UsuarioTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.repository.UsuarioRepository;
 import com.mfinancas.api.service.UsuarioService;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -23,16 +25,19 @@ public class UsuarioServiceIT {
     private UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioRepository UsuarioRepository;
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioDataProvider usuarioDataProvider;
 
     @Test
     public void createUsuario() {
         UsuarioTO usuarioTO = new UsuarioTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
-        int before = UsuarioRepository.findAll().size();
+        int before = usuarioRepository.findAll().size();
 
         UsuarioTO usuarioResponse = usuarioService.createUsuario(usuarioTO);
 
-        int after = UsuarioRepository.findAll().size();
+        int after = usuarioRepository.findAll().size();
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(usuarioResponse.senha()).isNotEqualTo(null);
@@ -112,6 +117,32 @@ public class UsuarioServiceIT {
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioTO)).isInstanceOf(FailedConditional.class).hasMessage("E-mail inválido.");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void deleteUsuario(){
+        usuarioRepository.deleteAll();
+        UsuarioTO usuarioSave = usuarioDataProvider.createUsuarioCustom("delete.user@gmail.com", "delete123");
+        long afterSave = usuarioRepository.count();
+
+        usuarioService.deleteUsuario(usuarioSave.uuid());
+        long afterDeleted = usuarioRepository.count();
+
+        SoftAssertions.assertSoftly(s ->  {
+            s.assertThat(afterSave).isEqualTo(1);
+            s.assertThat(afterDeleted).isEqualTo(0);
+        });
+    }
+
+    @Test
+    public void deleteUsuarioIsNull(){
+        UUID uuidFake = UUID.randomUUID();
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThatThrownBy(() -> usuarioService.deleteUsuario(uuidFake)).isInstanceOf(IsNull.class)
+                    .hasMessage("Usuário não encontrado.");
         });
     }
 }
