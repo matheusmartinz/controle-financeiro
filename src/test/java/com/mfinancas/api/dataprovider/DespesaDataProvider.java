@@ -1,7 +1,7 @@
 package com.mfinancas.api.dataprovider;
 
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import com.mfinancas.api.service.DespesaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,23 +20,23 @@ public class DespesaDataProvider {
     private CategoriaDataProvider categoriaDataProvider;
 
 
-    public DespesaTO createDespesa() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Lazer");
+    public DespesaDTO createDespesa() {
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Lazer");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(),
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(),
                 "Beto Carreiro", BigDecimal.valueOf(280.9),
-                LocalDate.now(), false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+                LocalDate.now(), false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        return despesaService.createDespesa(despesaTO);
+        return despesaService.createDespesa(despesaDTO);
     }
 
-    public DespesaTO createDespesaCustom(String nomeCategoria, String nomeDespesa){
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria(nomeCategoria);
+    public DespesaDTO createDespesaCustom(String nomeCategoria, String nomeDespesa){
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria(nomeCategoria);
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(),
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(),
                 nomeDespesa, BigDecimal.valueOf(280.9),
-                LocalDate.now(), false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+                LocalDate.now(), false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        return despesaService.createDespesa(despesaTO);
+        return despesaService.createDespesa(despesaDTO);
     }
 }

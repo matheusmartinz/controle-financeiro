@@ -1,14 +1,14 @@
 package com.mfinancas.api.repository;
 
-import com.mfinancas.api.model.Despesa;
+import com.mfinancas.api.model.Receita;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface DespesaRepository extends JpaRepository<Despesa, Long> {
-    Despesa findByUuid(UUID uuid);
+public interface ReceitaRepository extends JpaRepository<Receita, Long> {
+    Receita findByUuid(UUID uuid);
 
-    void deleteByUuid(UUID uuidDespesa);
+    void deleteByUuid(UUID uuidReceita);
 }

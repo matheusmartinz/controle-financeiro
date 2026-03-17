@@ -1,7 +1,7 @@
 package com.mfinancas.api.usuario;
 
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -87,7 +88,7 @@ public class UsuarioRestControllerIT {
         usuarioRepository.deleteAll();
         usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
 
-        UsuarioTO usuarioRequest = new UsuarioTO(UUID.randomUUID(), "testeLogin@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeLogin@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -103,7 +104,7 @@ public class UsuarioRestControllerIT {
         usuarioRepository.deleteAll();
         usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
 
-        UsuarioTO usuarioRequest = new UsuarioTO(UUID.randomUUID(), "testeError@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeError@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -111,5 +112,15 @@ public class UsuarioRestControllerIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Credenciais incorretos."));
+    }
+
+    @Test
+    public void deleteUsuario() throws Exception{
+        usuarioRepository.deleteAll();
+        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("deleteUsu@gmail.com", "delete123");
+
+        mockMvc.perform(delete("/controle-financeiro/delete-usuario/" + usuarioSave.uuid()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Usuário deletado com sucesso."));
     }
 }

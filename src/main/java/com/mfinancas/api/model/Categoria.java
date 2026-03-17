@@ -1,7 +1,7 @@
 package com.mfinancas.api.model;
 
 import com.mfinancas.api.TipoCategoria;
-import com.mfinancas.api.dto.CategoriaTO;
+import com.mfinancas.api.dto.CategoriaDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,10 +22,15 @@ public class Categoria extends AbstractEntity {
     private UUID usuarioFK;
 
 
-    public Categoria(CategoriaTO categoriaTO, UUID uuidUsuario) {
+    public Categoria(CategoriaDTO categoriaDTO, UUID uuidUsuario) {
         super();
-        this.nome = categoriaTO.nome();
-        this.tipo = categoriaTO.tipo();
+        this.nome = categoriaDTO.nome();
+        this.tipo = categoriaDTO.tipo();
         this.usuarioFK = uuidUsuario;
+    }
+
+    public void updateCategoria(String nome, TipoCategoria tipo) {
+        this.nome = nome;
+        this.tipo = tipo;
     }
 }

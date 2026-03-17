@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(FailedConditional.class)
-    public ResponseEntity<Map<String, String>> handleFailedConditional(FailedConditional ex){
+    public ResponseEntity<Map<String, String>> handleFailedConditional(FailedConditional ex) {
         Map<String, String> error = new HashMap<>();
         error.put("message", ex.getMessage());
 

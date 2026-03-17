@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record DespesaTO(
+public record DespesaDTO(
         UUID uuidDespesa,
         String descricao,
         BigDecimal valor,
@@ -16,7 +16,7 @@ public record DespesaTO(
         UUID usuarioFK
 ) {
 
-    public DespesaTO(Despesa despesa) {
+    public DespesaDTO(Despesa despesa) {
         this(despesa.getUuid(),
                 despesa.getDescricao(),
                 despesa.getValor(),

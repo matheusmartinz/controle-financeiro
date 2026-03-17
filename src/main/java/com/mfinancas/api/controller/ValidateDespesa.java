@@ -1,6 +1,6 @@
 package com.mfinancas.api.controller;
 
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.repository.UsuarioRepository;
@@ -19,18 +19,18 @@ public class ValidateDespesa {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    public void validaDespesaTO(DespesaTO despesaTO) {
+    public void validaDespesaTO(DespesaDTO despesaDTO) {
 
-        if (usuarioRepository.findByUuid(despesaTO.usuarioFK()) == null) {
+        if (usuarioRepository.findByUuid(despesaDTO.usuarioFK()) == null) {
             throw new IsNull("Usuário não encontrado.");
         }
-        if (despesaTO.descricao() == null || despesaTO.descricao().isEmpty()) {
+        if (despesaDTO.descricao() == null || despesaDTO.descricao().isEmpty()) {
             throw new FailedConditional("Favor informar a descrição.");
         }
-        if (despesaTO.valor().compareTo(BigDecimal.ZERO) <= 0) {
+        if (despesaDTO.valor().compareTo(BigDecimal.ZERO) <= 0) {
             throw new FailedConditional("O valor deve ser maior do que zero.");
         }
-        if (categoriaRepository.findByUuid(despesaTO.categoriaFK()) == null) {
+        if (categoriaRepository.findByUuid(despesaDTO.categoriaFK()) == null) {
             throw new IsNull("Categoria não encontrada.");
         }
     }

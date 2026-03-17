@@ -11,4 +11,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     boolean existsByNome(String nome);
 
     Categoria findByUuid(UUID uuid);
+
+    void deleteByUuid(UUID uuidCategoria);
 }

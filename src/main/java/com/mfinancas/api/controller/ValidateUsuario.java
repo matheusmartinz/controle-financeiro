@@ -1,6 +1,6 @@
 package com.mfinancas.api.controller;
 
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.utils.ValidateEmail;
 import org.springframework.stereotype.Component;
@@ -8,14 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidateUsuario {
 
-    public void validateUsuarioTO(UsuarioTO usuarioTO) {
-        if ((usuarioTO.senha() == null || usuarioTO.senha().isBlank()) &&
-                (usuarioTO.email() == null || usuarioTO.email().isBlank())) {
+    public void validateUsuarioTO(UsuarioDTO usuarioDTO) {
+        boolean passwordIsNull = usuarioDTO.senha() == null || usuarioDTO.senha().isBlank();
+        boolean emailIsNull = usuarioDTO.email() == null || usuarioDTO.email().isBlank();
+
+        if (passwordIsNull && emailIsNull) {
             throw new FailedConditional("Obrigatório inserir todos os campos.");
         }
-        if (usuarioTO.senha() == null || usuarioTO.senha().isBlank()) {
+        if (passwordIsNull) {
             throw new FailedConditional("Obrigatório informar senha.");
         }
-        ValidateEmail.validaEmail(usuarioTO.email());
+        ValidateEmail.validaEmail(usuarioDTO.email());
     }
 }

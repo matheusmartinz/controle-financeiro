@@ -1,9 +1,10 @@
 package com.mfinancas.api.categoria;
 
 import com.mfinancas.api.TipoCategoria;
+import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.service.CategoriaRepository;
 import com.mfinancas.api.service.CategoriaService;
 import jakarta.transaction.Transactional;
@@ -20,8 +21,10 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
@@ -40,6 +43,9 @@ public class CategoriaRestControllerIT {
     private CategoriaService categoriaService;
 
     @Autowired
+    private CategoriaDataProvider categoriaDataProvider;
+
+    @Autowired
     private UsuarioDataProvider usuarioDataProvider;
 
     @Autowired
@@ -48,12 +54,12 @@ public class CategoriaRestControllerIT {
     @Test
     public void getCategorias() throws Exception {
         categoriaRepository.deleteAll();
-        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
-        CategoriaTO categoriaTO1 = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
-        categoriaService.createCategoria(categoriaTO1, categoriaTO1.usuarioFK());
+        UsuarioDTO usuario = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO1 = new CategoriaDTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+        categoriaService.createCategoria(categoriaDTO1, categoriaDTO1.usuarioFK());
 
-        CategoriaTO categoriaTO2 = new CategoriaTO(UUID.randomUUID(), "Teste2", TipoCategoria.DESPESA, usuario.uuid());
-        categoriaService.createCategoria(categoriaTO2, categoriaTO2.usuarioFK());
+        CategoriaDTO categoriaDTO2 = new CategoriaDTO(UUID.randomUUID(), "Teste2", TipoCategoria.DESPESA, usuario.uuid());
+        categoriaService.createCategoria(categoriaDTO2, categoriaDTO2.usuarioFK());
 
         mockMvc.perform(get("/categoria").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -74,16 +80,43 @@ public class CategoriaRestControllerIT {
                 .andExpect(jsonPath("$", hasSize(0)));
     }
 
-//    @Test
-//    public void postCategoria() throws Exception {
-//        categoriaRepository.deleteAll();
-//        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
-//        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
-//
-//        String categoriaRequest = objectMapper.writeValueAsString(categoriaTO);
-//
-//        mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.")) VALIDAR O POST
-//    }
+    @Test
+    public void postCategoria() throws Exception {
+        categoriaRepository.deleteAll();
+        UsuarioDTO usuario = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+
+        String categoriaRequest = objectMapper.writeValueAsString(categoriaDTO);
+
+        mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Teste1"))
+                .andExpect(jsonPath("$.tipo").value("DESPESA"))
+                .andExpect(jsonPath("$.usuarioFK").value(usuario.uuid().toString()));
+    }
+
+    @Test
+    public void putCategoria() throws Exception{
+        categoriaRepository.deleteAll();
+        CategoriaDTO categoriaSaved = categoriaDataProvider.createCategoria("qualquerCoisa");
+        CategoriaDTO categoriaDTO = new CategoriaDTO(categoriaSaved.uuidCategoria(), "Teste1", TipoCategoria.RECEITA, categoriaSaved.usuarioFK());
+
+        String categoriaJSON = objectMapper.writeValueAsString(categoriaDTO);
+
+        mockMvc.perform(put("/categoria/edit/" + categoriaSaved.uuidCategoria()).contentType(MediaType.APPLICATION_JSON).content(categoriaJSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Teste1"))
+                .andExpect(jsonPath("$.tipo").value("RECEITA"))
+                .andExpect(jsonPath("$.usuarioFK").value(categoriaSaved.usuarioFK().toString()));
+    }
+
+    @Test
+    public void deleteCategoria() throws Exception {
+        categoriaRepository.deleteAll();
+        CategoriaDTO categoriaCriada = categoriaDataProvider.createCategoria("testeDelete");
+
+        mockMvc.perform(delete("/categoria/delete/" + categoriaCriada.uuidCategoria()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Deletado com sucesso."));
+    }
 }
