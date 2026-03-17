@@ -1,7 +1,7 @@
 package com.mfinancas.api.service;
 
 import com.mfinancas.api.controller.ValidateDespesa;
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Despesa;
 import com.mfinancas.api.repository.DespesaRepository;
@@ -27,27 +27,27 @@ public class DespesaService extends SuperServiceSave<Despesa, DespesaRepository>
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public DespesaTO createDespesa(DespesaTO despesaTO) {
-        validateDespesa.validaDespesaTO(despesaTO);
+    public DespesaDTO createDespesa(DespesaDTO despesaDTO) {
+        validateDespesa.validaDespesaTO(despesaDTO);
 
-        Despesa despesa = new Despesa(despesaTO);
+        Despesa despesa = new Despesa(despesaDTO);
 
-        return new DespesaTO(save(despesa));
+        return new DespesaDTO(save(despesa));
     }
 
-    public List<DespesaTO> findAllDespesas() {
+    public List<DespesaDTO> findAllDespesas() {
         List<Despesa> despesas = despesaRepository.findAll();
-        return despesas.stream().map(DespesaTO::new).toList();
+        return despesas.stream().map(DespesaDTO::new).toList();
     }
 
-    public DespesaTO updateDespesa(DespesaTO despesaTO, UUID uuidDespesa) {
+    public DespesaDTO updateDespesa(DespesaDTO despesaDTO, UUID uuidDespesa) {
         Despesa entity = despesaRepository.findByUuid(uuidDespesa);
         if (entity == null) {
             throw new IsNull("Despesa não encontrada.");
         }
-        validateDespesa.validaDespesaTO(despesaTO);
-        entity.updateDespesa(despesaTO);
-        return new DespesaTO(despesaRepository.save(entity));
+        validateDespesa.validaDespesaTO(despesaDTO);
+        entity.updateDespesa(despesaDTO);
+        return new DespesaDTO(despesaRepository.save(entity));
     }
 
     public void deleteDespesa(UUID uuidDespesa) {

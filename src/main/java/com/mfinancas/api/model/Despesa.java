@@ -1,6 +1,6 @@
 package com.mfinancas.api.model;
 
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +25,13 @@ public class Despesa extends AbstractEntity {
 
     private UUID usuarioFK;
 
-    public Despesa(DespesaTO despesaTO) {
-        descricao = despesaTO.descricao();
-        valor = despesaTO.valor();
-        dataVencimento = despesaTO.dataVencimento();
-        pago = despesaTO.pago();
-        categoriaFK = despesaTO.categoriaFK();
-        usuarioFK = despesaTO.usuarioFK();
+    public Despesa(DespesaDTO despesaDTO) {
+        descricao = despesaDTO.descricao();
+        valor = despesaDTO.valor();
+        dataVencimento = despesaDTO.dataVencimento();
+        pago = despesaDTO.pago();
+        categoriaFK = despesaDTO.categoriaFK();
+        usuarioFK = despesaDTO.usuarioFK();
     }
 
     public boolean isPago() {
@@ -46,12 +46,12 @@ public class Despesa extends AbstractEntity {
         return isPago() && !this.dataVencimento.isBefore(LocalDate.now());
     }
 
-    public void updateDespesa(DespesaTO despesaTO) {
-        this.descricao = despesaTO.descricao();
-        this.valor = despesaTO.valor();
-        this.dataVencimento = despesaTO.dataVencimento();
-        this.pago = despesaTO.pago();
-        this.categoriaFK = despesaTO.categoriaFK();
-        this.usuarioFK = despesaTO.usuarioFK();
+    public void updateDespesa(DespesaDTO despesaDTO) {
+        this.descricao = despesaDTO.descricao();
+        this.valor = despesaDTO.valor();
+        this.dataVencimento = despesaDTO.dataVencimento();
+        this.pago = despesaDTO.pago();
+        this.categoriaFK = despesaDTO.categoriaFK();
+        this.usuarioFK = despesaDTO.usuarioFK();
     }
 }

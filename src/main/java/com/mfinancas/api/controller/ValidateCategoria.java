@@ -1,6 +1,6 @@
 package com.mfinancas.api.controller;
 
-import com.mfinancas.api.dto.CategoriaTO;
+import com.mfinancas.api.dto.CategoriaDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.repository.UsuarioRepository;
@@ -21,17 +21,17 @@ public class ValidateCategoria {
     @Autowired
     private final CategoriaRepository categoriaRepository;
 
-    public void validarCategoriaRequest(CategoriaTO categoriaTO, UUID uuidUsuario) {
+    public void validarCategoriaRequest(CategoriaDTO categoriaDTO, UUID uuidUsuario) {
         if (usuarioRepository.findByUuid(uuidUsuario) == null) {
             throw new IsNull("Usuário não encontrado.");
         }
-        if (categoriaRepository.existsByNome(categoriaTO.nome())) {
+        if (categoriaRepository.existsByNome(categoriaDTO.nome())) {
             throw new FailedConditional("Já existe um nome cadastrado com essa categoria.");
         }
-        if (categoriaTO.nome().isEmpty()) {
+        if (categoriaDTO.nome().isEmpty()) {
             throw new FailedConditional("Obrigatório informar o descricao da categoria.");
         }
-        if (categoriaTO.tipo() == null) {
+        if (categoriaDTO.tipo() == null) {
             throw new FailedConditional("Obrigatório informar o  tipo da categoria.");
         }
     }

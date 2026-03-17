@@ -1,8 +1,8 @@
 package com.mfinancas.api.dataprovider;
 
 import com.mfinancas.api.TipoCategoria;
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.service.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,17 +17,17 @@ public class CategoriaDataProvider {
     @Autowired
     private CategoriaService categoriaService;
 
-    public CategoriaTO createCategoria(String nome) {
+    public CategoriaDTO createCategoria(String nome) {
 
-        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuario = usuarioDataProvider.createUsuarioTO();
 
-        CategoriaTO categoriaTO = new CategoriaTO(
+        CategoriaDTO categoriaDTO = new CategoriaDTO(
                 UUID.randomUUID(),
                 nome,
                 TipoCategoria.DESPESA,
                 usuario.uuid()
         );
 
-        return categoriaService.createCategoria(categoriaTO, usuario.uuid());
+        return categoriaService.createCategoria(categoriaDTO, usuario.uuid());
     }
 }

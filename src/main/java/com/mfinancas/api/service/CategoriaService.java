@@ -1,7 +1,7 @@
 package com.mfinancas.api.service;
 
 import com.mfinancas.api.controller.ValidateCategoria;
-import com.mfinancas.api.dto.CategoriaTO;
+import com.mfinancas.api.dto.CategoriaDTO;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Categoria;
 import org.jspecify.annotations.Nullable;
@@ -23,25 +23,25 @@ public class CategoriaService extends SuperServiceSave<Categoria, CategoriaRepos
         super(repository);
     }
 
-    public CategoriaTO createCategoria(CategoriaTO categoriaTO, UUID uuidUsuario) {
-        validateCategoria.validarCategoriaRequest(categoriaTO, uuidUsuario);
-        Categoria categoria = new Categoria(categoriaTO, uuidUsuario);
-        return new CategoriaTO(saveAndFlush(categoria));
+    public CategoriaDTO createCategoria(CategoriaDTO categoriaDTO, UUID uuidUsuario) {
+        validateCategoria.validarCategoriaRequest(categoriaDTO, uuidUsuario);
+        Categoria categoria = new Categoria(categoriaDTO, uuidUsuario);
+        return new CategoriaDTO(saveAndFlush(categoria));
     }
 
-    public @Nullable List<CategoriaTO> getAllCategorias() {
+    public @Nullable List<CategoriaDTO> getAllCategorias() {
         List<Categoria> toReturnEntity = categoriaRepository.findAll();
-        return toReturnEntity.stream().map(CategoriaTO::new).toList();
+        return toReturnEntity.stream().map(CategoriaDTO::new).toList();
     }
 
-    public CategoriaTO updateCategoria(CategoriaTO categoriaTO, UUID uuidCategoria) {
+    public CategoriaDTO updateCategoria(CategoriaDTO categoriaDTO, UUID uuidCategoria) {
         Categoria entity = categoriaRepository.findByUuid(uuidCategoria);
         if (entity == null) {
             throw new IsNull("Categoria não encontrada.");
         }
-        validateCategoria.validarCategoriaRequest(categoriaTO, categoriaTO.usuarioFK());
-        entity.updateCategoria(categoriaTO.nome(), categoriaTO.tipo());
-        return new CategoriaTO(categoriaRepository.save(entity));
+        validateCategoria.validarCategoriaRequest(categoriaDTO, categoriaDTO.usuarioFK());
+        entity.updateCategoria(categoriaDTO.nome(), categoriaDTO.tipo());
+        return new CategoriaDTO(categoriaRepository.save(entity));
     }
 
     public void deleteCategoria(UUID uuidCategoria) {

@@ -1,6 +1,6 @@
 package com.mfinancas.api.model;
 
-import com.mfinancas.api.dto.ReceitaTO;
+import com.mfinancas.api.dto.ReceitaDTO;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,12 +26,12 @@ public class Receita extends AbstractEntity {
 
     private UUID usuarioFK;
 
-    public Receita(ReceitaTO receitaTO) {
-        this.descricao = receitaTO.descricao();
-        this.valor = receitaTO.valor();
-        this.data = receitaTO.data();
-        this.categoriaFK = receitaTO.categoriaFK();
-        this.usuarioFK = receitaTO.usuarioFK();
+    public Receita(ReceitaDTO receitaDTO) {
+        this.descricao = receitaDTO.descricao();
+        this.valor = receitaDTO.valor();
+        this.data = receitaDTO.data();
+        this.categoriaFK = receitaDTO.categoriaFK();
+        this.usuarioFK = receitaDTO.usuarioFK();
     }
 
     public void atualizarReceita(String descricao, BigDecimal valor, LocalDate data, UUID categoriaFK) {

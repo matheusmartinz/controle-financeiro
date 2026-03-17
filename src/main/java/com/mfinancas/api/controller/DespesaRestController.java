@@ -1,12 +1,11 @@
 package com.mfinancas.api.controller;
 
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import com.mfinancas.api.service.DespesaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,18 +17,18 @@ public class DespesaRestController {
     private DespesaService despesaService;
 
     @GetMapping
-    public ResponseEntity<List<DespesaTO>> getAllDespesas(){
+    public ResponseEntity<List<DespesaDTO>> getAllDespesas(){
         return ResponseEntity.ok(despesaService.findAllDespesas());
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<DespesaTO> createDespesa(@RequestBody DespesaTO despesaTO){
-        return ResponseEntity.ok(despesaService.createDespesa(despesaTO));
+    public ResponseEntity<DespesaDTO> createDespesa(@RequestBody DespesaDTO despesaDTO){
+        return ResponseEntity.ok(despesaService.createDespesa(despesaDTO));
     }
 
     @PutMapping("/editar/{uuidDespesa}")
-    public ResponseEntity<DespesaTO> updateDespesa(@RequestBody DespesaTO despesaTO, @PathVariable UUID uuidDespesa){
-        return ResponseEntity.ok(despesaService.updateDespesa(despesaTO, uuidDespesa));
+    public ResponseEntity<DespesaDTO> updateDespesa(@RequestBody DespesaDTO despesaDTO, @PathVariable UUID uuidDespesa){
+        return ResponseEntity.ok(despesaService.updateDespesa(despesaDTO, uuidDespesa));
     }
 
     @DeleteMapping("/delete/{uuidDespesa}")

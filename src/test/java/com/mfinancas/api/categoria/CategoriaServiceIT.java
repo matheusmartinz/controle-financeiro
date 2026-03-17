@@ -3,8 +3,8 @@ package com.mfinancas.api.categoria;
 import com.mfinancas.api.TipoCategoria;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Categoria;
@@ -37,9 +37,9 @@ public class CategoriaServiceIT {
 
     @Test
     public void createCategoria() {
-        UsuarioTO usuarioResponse = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuarioResponse = usuarioDataProvider.createUsuarioTO();
 
-        CategoriaTO categoriaTO = new CategoriaTO(
+        CategoriaDTO categoriaDTO = new CategoriaDTO(
                 UUID.randomUUID(),
                 "Moto",
                 TipoCategoria.DESPESA,
@@ -47,7 +47,7 @@ public class CategoriaServiceIT {
         );
         long before = categoriaRepository.count();
 
-        CategoriaTO toResponseCategoria = categoriaService.createCategoria(categoriaTO, categoriaTO.usuarioFK());
+        CategoriaDTO toResponseCategoria = categoriaService.createCategoria(categoriaDTO, categoriaDTO.usuarioFK());
 
         long after = categoriaRepository.count();
 
@@ -61,11 +61,11 @@ public class CategoriaServiceIT {
     @Test
     @SneakyThrows
     public void categoriaNotFound() {
-        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, null);
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, null);
 
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaTO, categoriaTO.usuarioFK()))
+            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, categoriaDTO.usuarioFK()))
                     .isInstanceOf(IsNull.class)
                     .hasMessage("Usuário não encontrado.");
         });
@@ -74,16 +74,16 @@ public class CategoriaServiceIT {
     @Test
     @SneakyThrows
     public void categoriaSameName() {
-        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
 
-        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioTO.uuid());
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioDTO.uuid());
 
-        categoriaService.createCategoria(categoriaTO, usuarioTO.uuid());
+        categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid());
 
-        CategoriaTO categoriaTOSameName = new CategoriaTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioTO.uuid());
+        CategoriaDTO categoriaDTOSameName = new CategoriaDTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioDTO.uuid());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaTOSameName, usuarioTO.uuid()))
+            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTOSameName, usuarioDTO.uuid()))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("Já existe um nome cadastrado com essa categoria.");
         });
@@ -92,12 +92,12 @@ public class CategoriaServiceIT {
     @Test
     @SneakyThrows
     public void categoriaNomeVazio() {
-        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
 
-        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "", TipoCategoria.DESPESA, usuarioTO.uuid());
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "", TipoCategoria.DESPESA, usuarioDTO.uuid());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaTO, usuarioTO.uuid()))
+            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid()))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("Obrigatório informar o descricao da categoria.");
         });
@@ -106,12 +106,12 @@ public class CategoriaServiceIT {
     @Test
     @SneakyThrows
     public void categoriaTipoNull() {
-        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
 
-        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Grama", null, usuarioTO.uuid());
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Grama", null, usuarioDTO.uuid());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaTO, usuarioTO.uuid()))
+            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid()))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("Obrigatório informar o  tipo da categoria.");
         });
@@ -120,16 +120,16 @@ public class CategoriaServiceIT {
     @Test
     public void updateCategoria() {
         categoriaRepository.deleteAll();
-        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
 
         long before = categoriaRepository.count();
-        CategoriaTO categoriaResponse = categoriaDataProvider.createCategoria("Fazenda");
+        CategoriaDTO categoriaResponse = categoriaDataProvider.createCategoria("Fazenda");
         Categoria categoriaSaved = categoriaRepository.findByUuid(categoriaResponse.uuidCategoria());
         long after = categoriaRepository.count();
 
-        CategoriaTO categoriaUpdate = new CategoriaTO(categoriaSaved.getUuid(), "Fazendinha", TipoCategoria.DESPESA, usuarioTO.uuid());
+        CategoriaDTO categoriaUpdate = new CategoriaDTO(categoriaSaved.getUuid(), "Fazendinha", TipoCategoria.DESPESA, usuarioDTO.uuid());
         long afterUpdate = categoriaRepository.count();
-        CategoriaTO categoriaUpdated = categoriaService.updateCategoria(categoriaUpdate, categoriaResponse.uuidCategoria());
+        CategoriaDTO categoriaUpdated = categoriaService.updateCategoria(categoriaUpdate, categoriaResponse.uuidCategoria());
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(after).isEqualTo(before + 1);
@@ -147,7 +147,7 @@ public class CategoriaServiceIT {
 
         categoriaDataProvider.createCategoria("Fazenda2");
 
-        CategoriaTO categoriaUpdate = categoriaDataProvider.createCategoria("Fazendinha3");
+        CategoriaDTO categoriaUpdate = categoriaDataProvider.createCategoria("Fazendinha3");
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> categoriaService.updateCategoria(categoriaUpdate, UUID.randomUUID())).isInstanceOf(IsNull.class)
@@ -159,7 +159,7 @@ public class CategoriaServiceIT {
     @Transactional
     public void deleteCategoria() {
         categoriaRepository.deleteAll();
-        CategoriaTO categoriaSaved = categoriaDataProvider.createCategoria("TestedeDeletar");
+        CategoriaDTO categoriaSaved = categoriaDataProvider.createCategoria("TestedeDeletar");
         long afterCreated = categoriaRepository.count();
 
         categoriaService.deleteCategoria(categoriaSaved.uuidCategoria());

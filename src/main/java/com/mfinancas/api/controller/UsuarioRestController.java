@@ -1,6 +1,6 @@
 package com.mfinancas.api.controller;
 
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +17,19 @@ public class UsuarioRestController {
     private UsuarioService usuarioService;
 
     @PostMapping("/cadastro")
-    public ResponseEntity<UsuarioTO> createUsuario(@RequestBody UsuarioTO usuarioTO) {
-        UsuarioTO toReturn = usuarioService.createUsuario(usuarioTO);
+    public ResponseEntity<UsuarioDTO> createUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        UsuarioDTO toReturn = usuarioService.createUsuario(usuarioDTO);
         return ResponseEntity.ok(toReturn);
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioTO>> findAll() {
+    public ResponseEntity<List<UsuarioDTO>> findAll() {
         return ResponseEntity.ok(usuarioService.getAll());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioTO> login(@RequestBody UsuarioTO usuarioTO) {
-        UsuarioTO toReturnUsuario = usuarioService.postLogin(usuarioTO);
+    public ResponseEntity<UsuarioDTO> login(@RequestBody UsuarioDTO usuarioDTO) {
+        UsuarioDTO toReturnUsuario = usuarioService.postLogin(usuarioDTO);
         return ResponseEntity.ok().body(toReturnUsuario);
     }
 

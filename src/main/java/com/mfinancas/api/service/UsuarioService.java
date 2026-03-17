@@ -1,7 +1,7 @@
 package com.mfinancas.api.service;
 
 import com.mfinancas.api.controller.ValidateUsuario;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Usuario;
 import com.mfinancas.api.repository.UsuarioRepository;
@@ -28,24 +28,24 @@ public class UsuarioService extends SuperServiceSave<Usuario, UsuarioRepository>
         super(repository);
     }
 
-    public UsuarioTO createUsuario(UsuarioTO usuarioTO) {
-        validateUsuario.validateUsuarioTO(usuarioTO);
-        Usuario usuario = new Usuario(usuarioTO);
-        return new UsuarioTO(save(usuario));
+    public UsuarioDTO createUsuario(UsuarioDTO usuarioDTO) {
+        validateUsuario.validateUsuarioTO(usuarioDTO);
+        Usuario usuario = new Usuario(usuarioDTO);
+        return new UsuarioDTO(save(usuario));
     }
 
-    public UsuarioTO postLogin(UsuarioTO usuarioTO) {
-        validateUsuario.validateUsuarioTO(usuarioTO);
-        Usuario userEntity = usuarioRepositoryCustomImpl.findByUser(usuarioTO);
+    public UsuarioDTO postLogin(UsuarioDTO usuarioDTO) {
+        validateUsuario.validateUsuarioTO(usuarioDTO);
+        Usuario userEntity = usuarioRepositoryCustomImpl.findByUser(usuarioDTO);
         if (userEntity == null) {
             throw new IsNull("Credenciais incorretos.");
         }
-        return new UsuarioTO(userEntity);
+        return new UsuarioDTO(userEntity);
     }
 
-    public List<UsuarioTO> getAll() {
+    public List<UsuarioDTO> getAll() {
         List<Usuario> listUsers = usuarioRepository.findAll();
-        return listUsers.stream().map(UsuarioTO::new).toList();
+        return listUsers.stream().map(UsuarioDTO::new).toList();
     }
 
     public void deleteUsuario(UUID uuidUser) {

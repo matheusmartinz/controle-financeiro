@@ -1,7 +1,7 @@
 package com.mfinancas.api.usuario;
 
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
@@ -88,7 +88,7 @@ public class UsuarioRestControllerIT {
         usuarioRepository.deleteAll();
         usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
 
-        UsuarioTO usuarioRequest = new UsuarioTO(UUID.randomUUID(), "testeLogin@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeLogin@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -104,7 +104,7 @@ public class UsuarioRestControllerIT {
         usuarioRepository.deleteAll();
         usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
 
-        UsuarioTO usuarioRequest = new UsuarioTO(UUID.randomUUID(), "testeError@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeError@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -117,7 +117,7 @@ public class UsuarioRestControllerIT {
     @Test
     public void deleteUsuario() throws Exception{
         usuarioRepository.deleteAll();
-        UsuarioTO usuarioSave = usuarioDataProvider.createUsuarioCustom("deleteUsu@gmail.com", "delete123");
+        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("deleteUsu@gmail.com", "delete123");
 
         mockMvc.perform(delete("/controle-financeiro/delete-usuario/" + usuarioSave.uuid()))
                 .andExpect(status().isOk())

@@ -1,7 +1,7 @@
 package com.mfinancas.api.service;
 
 import com.mfinancas.api.controller.ValidateReceita;
-import com.mfinancas.api.dto.ReceitaTO;
+import com.mfinancas.api.dto.ReceitaDTO;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Receita;
 import com.mfinancas.api.repository.ReceitaRepository;
@@ -24,23 +24,23 @@ public class ReceitaService extends SuperServiceSave<Receita, ReceitaRepository>
     @Autowired
     private ReceitaRepository receitaRepository;
 
-    public ReceitaTO createReceita(ReceitaTO receitaTO) {
-        validator.validateReceitaTO(receitaTO);
-        Receita receita = new Receita(receitaTO);
-        return new ReceitaTO(save(receita));
+    public ReceitaDTO createReceita(ReceitaDTO receitaDTO) {
+        validator.validateReceitaTO(receitaDTO);
+        Receita receita = new Receita(receitaDTO);
+        return new ReceitaDTO(save(receita));
     }
 
-    public List<ReceitaTO> findAllReceitas() {
-        return receitaRepository.findAll().stream().map(ReceitaTO::new).toList();
+    public List<ReceitaDTO> findAllReceitas() {
+        return receitaRepository.findAll().stream().map(ReceitaDTO::new).toList();
     }
 
-    public ReceitaTO updateReceita(ReceitaTO receitaTO, UUID uuidReceita) {
+    public ReceitaDTO updateReceita(ReceitaDTO receitaDTO, UUID uuidReceita) {
         Receita receita = receitaRepository.findByUuid(uuidReceita);
         if (receita == null){
             throw new IsNull("Receita não encontrada.");
         }
-        receita.atualizarReceita(receitaTO.descricao(), receitaTO.valor(), receitaTO.data(), receitaTO.categoriaFK());
-        return new ReceitaTO(receitaRepository.save(receita));
+        receita.atualizarReceita(receitaDTO.descricao(), receitaDTO.valor(), receitaDTO.data(), receitaDTO.categoriaFK());
+        return new ReceitaDTO(receitaRepository.save(receita));
     }
 
     public void deleteReceita(UUID uuidReceita) {

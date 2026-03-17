@@ -3,9 +3,9 @@ package com.mfinancas.api.despesa;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.DespesaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.DespesaTO;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.DespesaDTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
 import com.mfinancas.api.model.Despesa;
@@ -45,7 +45,7 @@ public class DespesaServiceIT {
     public void createDespesa() {
         long before = despesaRepository.count();
 
-        DespesaTO despesaCreated = despesaDataProvider.createDespesa();
+        DespesaDTO despesaCreated = despesaDataProvider.createDespesa();
 
         long after = despesaRepository.count();
 
@@ -60,13 +60,13 @@ public class DespesaServiceIT {
     @Test
     public void createDespesaUsuarioIsNull() {
 
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Mercado");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Mercado");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Compra do mes", BigDecimal.valueOf(1.200), LocalDate.now(),
-                true, categoriaTO.uuidCategoria(), null);
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Compra do mes", BigDecimal.valueOf(1.200), LocalDate.now(),
+                true, categoriaDTO.uuidCategoria(), null);
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(IsNull.class)
                     .hasMessage("Usuário não encontrado.");
         });
@@ -74,13 +74,13 @@ public class DespesaServiceIT {
 
     @Test
     public void createDespesaDescricaoNull() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Carro");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), null, BigDecimal.valueOf(450), LocalDate.now(),
-                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), null, BigDecimal.valueOf(450), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("Favor informar a descrição.");
         });
@@ -88,13 +88,13 @@ public class DespesaServiceIT {
 
     @Test
     public void createDespesaDescricaoIsEmpty() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Carro2");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro2");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "", BigDecimal.valueOf(450), LocalDate.now(),
-                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "", BigDecimal.valueOf(450), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("Favor informar a descrição.");
         });
@@ -102,13 +102,13 @@ public class DespesaServiceIT {
 
     @Test
     public void createDespesaValorInvalid() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Alimentação");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Alimentação");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Ifood", BigDecimal.valueOf(-10), LocalDate.now(),
-                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Ifood", BigDecimal.valueOf(-10), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(FailedConditional.class)
                     .hasMessage("O valor deve ser maior do que zero.");
         });
@@ -116,13 +116,13 @@ public class DespesaServiceIT {
 
     @Test
     public void createDespesaCategoriaFKNull() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Viagem");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Viagem");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Resort nordeste", BigDecimal.valueOf(4000), LocalDate.now(),
-                false, UUID.randomUUID(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Resort nordeste", BigDecimal.valueOf(4000), LocalDate.now(),
+                false, UUID.randomUUID(), categoriaDTO.usuarioFK());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaTO))
+            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(IsNull.class)
                     .hasMessage("Categoria não encontrada.");
         });
@@ -130,12 +130,12 @@ public class DespesaServiceIT {
 
     @Test
     public void despesaIsPago() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Isso2");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Isso2");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Um milhao", BigDecimal.valueOf(4000), LocalDate.now().minusDays(1),
-                true, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Um milhao", BigDecimal.valueOf(4000), LocalDate.now().minusDays(1),
+                true, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        Despesa despesa = new Despesa(despesaTO);
+        Despesa despesa = new Despesa(despesaDTO);
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(despesa.isPago()).isEqualTo(true);
@@ -144,12 +144,12 @@ public class DespesaServiceIT {
 
     @Test
     public void despesaIsAtrasado() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Familia");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Familia");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Presente Natal", BigDecimal.valueOf(4000), LocalDate.now().minusDays(1),
-                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Presente Natal", BigDecimal.valueOf(4000), LocalDate.now().minusDays(1),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        Despesa despesa = new Despesa(despesaTO);
+        Despesa despesa = new Despesa(despesaDTO);
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(despesa.isAtrasado()).isEqualTo(true);
@@ -158,12 +158,12 @@ public class DespesaServiceIT {
 
     @Test
     public void despesaIsEmDia() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("QualCoisa");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("QualCoisa");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Isso", BigDecimal.valueOf(4000), LocalDate.now(),
-                true, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Isso", BigDecimal.valueOf(4000), LocalDate.now(),
+                true, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        Despesa despesa = new Despesa(despesaTO);
+        Despesa despesa = new Despesa(despesaDTO);
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(despesa.isEmDia()).isEqualTo(true);
@@ -172,12 +172,12 @@ public class DespesaServiceIT {
 
     @Test
     public void updateDespesa() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("QualCoisa3");
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("QualCoisa3");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "Isso2", BigDecimal.valueOf(890), LocalDate.now().minusDays(1),
-                false, categoriaTO.uuidCategoria(), categoriaTO.usuarioFK());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Isso2", BigDecimal.valueOf(890), LocalDate.now().minusDays(1),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
 
-        Despesa despesa = new Despesa(despesaTO);
+        Despesa despesa = new Despesa(despesaDTO);
 
         SoftAssertions.assertSoftly(s -> {
             s.assertThat(despesa.isAtrasado()).isEqualTo(true);
@@ -185,14 +185,14 @@ public class DespesaServiceIT {
             s.assertThat(despesa.getPago()).isEqualTo(false);
         });
 
-        DespesaTO toReturnResponse = despesaService.createDespesa(despesaTO);
+        DespesaDTO toReturnResponse = despesaService.createDespesa(despesaDTO);
 
         long before = despesaRepository.count();
 
-        DespesaTO novaDespesaTO = new DespesaTO(toReturnResponse.uuidDespesa(), "nova despesa", BigDecimal.valueOf(890), LocalDate.now().minusDays(1),
+        DespesaDTO novaDespesaDTO = new DespesaDTO(toReturnResponse.uuidDespesa(), "nova despesa", BigDecimal.valueOf(890), LocalDate.now().minusDays(1),
                 true, toReturnResponse.categoriaFK(), toReturnResponse.usuarioFK());
 
-        DespesaTO despesaAtualizada = despesaService.updateDespesa(novaDespesaTO, novaDespesaTO.uuidDespesa());
+        DespesaDTO despesaAtualizada = despesaService.updateDespesa(novaDespesaDTO, novaDespesaDTO.uuidDespesa());
 
         Despesa entidadeAtualizada = new Despesa(despesaAtualizada);
 
@@ -215,14 +215,14 @@ public class DespesaServiceIT {
     @Test
     @SneakyThrows
     public void updateDespesaIsNull() {
-        CategoriaTO categoriaTO = categoriaDataProvider.createCategoria("Outros");
-        UsuarioTO usuarioTO = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Outros");
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
         despesaDataProvider.createDespesaCustom("Viajens", "Horlando");
 
-        DespesaTO despesaTO = new DespesaTO(UUID.randomUUID(), "surpresa niver", BigDecimal.valueOf(200), LocalDate.now().plusDays(15), false, categoriaTO.uuidCategoria(), usuarioTO.uuid());
+        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "surpresa niver", BigDecimal.valueOf(200), LocalDate.now().plusDays(15), false, categoriaDTO.uuidCategoria(), usuarioDTO.uuid());
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.updateDespesa(despesaTO, despesaTO.uuidDespesa())).isInstanceOf(IsNull.class)
+            s.assertThatThrownBy(() -> despesaService.updateDespesa(despesaDTO, despesaDTO.uuidDespesa())).isInstanceOf(IsNull.class)
                     .hasMessage("Despesa não encontrada.");
         });
     }
@@ -231,7 +231,7 @@ public class DespesaServiceIT {
     @Transactional
     public void deleteDespesa() {
         despesaRepository.deleteAll();
-        DespesaTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra", "Buque");
+        DespesaDTO despesaCreated = despesaDataProvider.createDespesaCustom("Sogra", "Buque");
         long afterCreated = despesaRepository.count();
         despesaService.deleteDespesa(despesaCreated.uuidDespesa());
         long afterDeleted = despesaRepository.count();

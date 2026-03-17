@@ -1,7 +1,7 @@
 package com.mfinancas.api.despesa;
 
 import com.mfinancas.api.dataprovider.DespesaDataProvider;
-import com.mfinancas.api.dto.DespesaTO;
+import com.mfinancas.api.dto.DespesaDTO;
 import com.mfinancas.api.repository.DespesaRepository;
 import com.mfinancas.api.service.DespesaService;
 import jakarta.transaction.Transactional;
@@ -73,7 +73,7 @@ public class DespesaRestControllerIT {
     @Test
     public void postDespesa() throws Exception {
         despesaRepository.deleteAll();
-        DespesaTO despesaResponse = despesaDataProvider.createDespesaCustom("Ford", "Troca de farol");
+        DespesaDTO despesaResponse = despesaDataProvider.createDespesaCustom("Ford", "Troca de farol");
 
         String despesaJson = objectMapper.writeValueAsString(despesaResponse);
 
@@ -93,10 +93,10 @@ public class DespesaRestControllerIT {
         despesaRepository.deleteAll();
 
         long before = despesaRepository.count();
-        DespesaTO despesaResponse = despesaDataProvider.createDespesaCustom("Filha", "Balé");
+        DespesaDTO despesaResponse = despesaDataProvider.createDespesaCustom("Filha", "Balé");
         long after = despesaRepository.count();
 
-        DespesaTO despesaUpdate = new DespesaTO(despesaResponse.uuidDespesa(), "Pneu", BigDecimal.valueOf(500),
+        DespesaDTO despesaUpdate = new DespesaDTO(despesaResponse.uuidDespesa(), "Pneu", BigDecimal.valueOf(500),
                 LocalDate.now().plusDays(20),false, despesaResponse.categoriaFK(), despesaResponse.usuarioFK());
 
         long afterUpdate = despesaRepository.count();
@@ -121,7 +121,7 @@ public class DespesaRestControllerIT {
     @Test
     public void deleteDespesa() throws Exception{
         despesaRepository.deleteAll();
-        DespesaTO despesaCriadaSalva = despesaDataProvider.createDespesaCustom("testeDeletin", "despesaDeletada");
+        DespesaDTO despesaCriadaSalva = despesaDataProvider.createDespesaCustom("testeDeletin", "despesaDeletada");
 
         mockMvc.perform(delete("/despesa/delete/" + despesaCriadaSalva.uuidDespesa()))
                 .andExpect(status().isOk())

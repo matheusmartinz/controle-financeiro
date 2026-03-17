@@ -1,7 +1,7 @@
 package com.mfinancas.api.receita;
 
 import com.mfinancas.api.dataprovider.ReceitaDataProvider;
-import com.mfinancas.api.dto.ReceitaTO;
+import com.mfinancas.api.dto.ReceitaDTO;
 import com.mfinancas.api.model.Receita;
 import com.mfinancas.api.repository.ReceitaRepository;
 import jakarta.transaction.Transactional;
@@ -44,8 +44,8 @@ public class ReceitaRestControllerIT {
 
     @Test
     public void postReceita() throws Exception{
-        ReceitaTO receitaTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha");
-        String receitaJSON = objectMapper.writeValueAsString(receitaTO);
+        ReceitaDTO receitaDTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha");
+        String receitaJSON = objectMapper.writeValueAsString(receitaDTO);
 
         mockMvc.perform(post("/receita/create").contentType(MediaType.APPLICATION_JSON).content(receitaJSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -69,14 +69,14 @@ public class ReceitaRestControllerIT {
     @Test
     public void putReceita() throws Exception {
         receitaRepository.deleteAll();
-        ReceitaTO receitaTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha5");
-        Receita receita = receitaRepository.findByUuid(receitaTO.uuidReceita());
+        ReceitaDTO receitaDTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha5");
+        Receita receita = receitaRepository.findByUuid(receitaDTO.uuidReceita());
 
-        ReceitaTO receitaTOUpdate = new ReceitaTO(receita.getUuid(), "Garcom de sexta", BigDecimal.valueOf(100), LocalDate.now(), receita.getCategoriaFK(), receita.getUsuarioFK());
+        ReceitaDTO receitaDTOUpdate = new ReceitaDTO(receita.getUuid(), "Garcom de sexta", BigDecimal.valueOf(100), LocalDate.now(), receita.getCategoriaFK(), receita.getUsuarioFK());
 
-        String receitaUpdateJSON = objectMapper.writeValueAsString(receitaTOUpdate);
+        String receitaUpdateJSON = objectMapper.writeValueAsString(receitaDTOUpdate);
 
-        mockMvc.perform(put("/receita/edit/" + receitaTOUpdate.uuidReceita()).contentType(MediaType.APPLICATION_JSON).content(receitaUpdateJSON).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/receita/edit/" + receitaDTOUpdate.uuidReceita()).contentType(MediaType.APPLICATION_JSON).content(receitaUpdateJSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.descricao").value("Garcom de sexta"))
                 .andExpect(jsonPath("$.uuidReceita").value(receita.getUuid().toString()))
@@ -86,9 +86,9 @@ public class ReceitaRestControllerIT {
     @Test
     @Transactional
     public void deleteReceita() throws Exception {
-        ReceitaTO receitaTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha6");
+        ReceitaDTO receitaDTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha6");
 
-        mockMvc.perform(delete("/receita/delete/" + receitaTO.uuidReceita()))
+        mockMvc.perform(delete("/receita/delete/" + receitaDTO.uuidReceita()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("Receita deletada com sucesso."));
     }

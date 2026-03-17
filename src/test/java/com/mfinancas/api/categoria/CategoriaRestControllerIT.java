@@ -3,8 +3,8 @@ package com.mfinancas.api.categoria;
 import com.mfinancas.api.TipoCategoria;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaTO;
-import com.mfinancas.api.dto.UsuarioTO;
+import com.mfinancas.api.dto.CategoriaDTO;
+import com.mfinancas.api.dto.UsuarioDTO;
 import com.mfinancas.api.service.CategoriaRepository;
 import com.mfinancas.api.service.CategoriaService;
 import jakarta.transaction.Transactional;
@@ -54,12 +54,12 @@ public class CategoriaRestControllerIT {
     @Test
     public void getCategorias() throws Exception {
         categoriaRepository.deleteAll();
-        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
-        CategoriaTO categoriaTO1 = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
-        categoriaService.createCategoria(categoriaTO1, categoriaTO1.usuarioFK());
+        UsuarioDTO usuario = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO1 = new CategoriaDTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+        categoriaService.createCategoria(categoriaDTO1, categoriaDTO1.usuarioFK());
 
-        CategoriaTO categoriaTO2 = new CategoriaTO(UUID.randomUUID(), "Teste2", TipoCategoria.DESPESA, usuario.uuid());
-        categoriaService.createCategoria(categoriaTO2, categoriaTO2.usuarioFK());
+        CategoriaDTO categoriaDTO2 = new CategoriaDTO(UUID.randomUUID(), "Teste2", TipoCategoria.DESPESA, usuario.uuid());
+        categoriaService.createCategoria(categoriaDTO2, categoriaDTO2.usuarioFK());
 
         mockMvc.perform(get("/categoria").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -83,10 +83,10 @@ public class CategoriaRestControllerIT {
     @Test
     public void postCategoria() throws Exception {
         categoriaRepository.deleteAll();
-        UsuarioTO usuario = usuarioDataProvider.createUsuarioTO();
-        CategoriaTO categoriaTO = new CategoriaTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
+        UsuarioDTO usuario = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Teste1", TipoCategoria.DESPESA, usuario.uuid());
 
-        String categoriaRequest = objectMapper.writeValueAsString(categoriaTO);
+        String categoriaRequest = objectMapper.writeValueAsString(categoriaDTO);
 
         mockMvc.perform(post("/categoria/create/" + usuario.uuid()).contentType(MediaType.APPLICATION_JSON).content(categoriaRequest).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -98,10 +98,10 @@ public class CategoriaRestControllerIT {
     @Test
     public void putCategoria() throws Exception{
         categoriaRepository.deleteAll();
-        CategoriaTO categoriaSaved = categoriaDataProvider.createCategoria("qualquerCoisa");
-        CategoriaTO categoriaTO = new CategoriaTO(categoriaSaved.uuidCategoria(), "Teste1", TipoCategoria.RECEITA, categoriaSaved.usuarioFK());
+        CategoriaDTO categoriaSaved = categoriaDataProvider.createCategoria("qualquerCoisa");
+        CategoriaDTO categoriaDTO = new CategoriaDTO(categoriaSaved.uuidCategoria(), "Teste1", TipoCategoria.RECEITA, categoriaSaved.usuarioFK());
 
-        String categoriaJSON = objectMapper.writeValueAsString(categoriaTO);
+        String categoriaJSON = objectMapper.writeValueAsString(categoriaDTO);
 
         mockMvc.perform(put("/categoria/edit/" + categoriaSaved.uuidCategoria()).contentType(MediaType.APPLICATION_JSON).content(categoriaJSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -113,7 +113,7 @@ public class CategoriaRestControllerIT {
     @Test
     public void deleteCategoria() throws Exception {
         categoriaRepository.deleteAll();
-        CategoriaTO categoriaCriada = categoriaDataProvider.createCategoria("testeDelete");
+        CategoriaDTO categoriaCriada = categoriaDataProvider.createCategoria("testeDelete");
 
         mockMvc.perform(delete("/categoria/delete/" + categoriaCriada.uuidCategoria()))
                 .andExpect(status().isOk())
