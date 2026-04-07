@@ -3,26 +3,31 @@ package com.mfinancas.api.receita;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.ReceitaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaDTO;
-import com.mfinancas.api.dto.ReceitaDTO;
-import com.mfinancas.api.dto.UsuarioDTO;
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.api.dto.receita.ReceitaDTO;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
 import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
-import com.mfinancas.api.model.Receita;
-import com.mfinancas.api.repository.ReceitaRepository;
-import com.mfinancas.api.repository.UsuarioRepository;
-import com.mfinancas.api.service.ReceitaService;
+import com.mfinancas.api.domain.entity.receita.Receita;
+import com.mfinancas.api.repository.receita.ReceitaRepository;
+import com.mfinancas.api.repository.usuario.UsuarioRepository;
+import com.mfinancas.api.service.receita.ReceitaService;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,8 +36,6 @@ public class ReceitaServiceIT {
     @Autowired
     private ReceitaRepository receitaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ReceitaService receitaService;
@@ -41,10 +44,11 @@ public class ReceitaServiceIT {
     private ReceitaDataProvider receitaDataProvider;
 
     @Autowired
-    private UsuarioDataProvider usuarioDataProvider;
+    private CategoriaDataProvider categoriaDataProvider;
 
     @Autowired
-    private CategoriaDataProvider categoriaDataProvider;
+    private UsuarioDataProvider usuarioDataProvider;
+
 
     @Test
     public void createReceita() {
@@ -83,58 +87,6 @@ public class ReceitaServiceIT {
         SoftAssertions.assertSoftly(s -> {
             s.assertThatThrownBy(() -> receitaService.createReceita(receita)).isInstanceOf(IsNull.class)
                     .hasMessage("Categoria não encontrada.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void receitaDescricaoIsNull() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber");
-        ReceitaDTO receita = new ReceitaDTO(UUID.randomUUID(), null, BigDecimal.valueOf(400), LocalDate.now(), categoriaDTO.uuidCategoria(), usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> receitaService.createReceita(receita)).isInstanceOf(FailedConditional.class)
-                    .hasMessage("Obrigatório informar a descricão.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void receitaDescricaoIsEmpty() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber4");
-        ReceitaDTO receita = new ReceitaDTO(UUID.randomUUID(), "", BigDecimal.valueOf(400), LocalDate.now(), categoriaDTO.uuidCategoria(), usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> receitaService.createReceita(receita)).isInstanceOf(FailedConditional.class)
-                    .hasMessage("Obrigatório informar a descricão.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void receitaValorIsInvalid() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber3");
-        ReceitaDTO receita = new ReceitaDTO(UUID.randomUUID(), "Presente de natal", BigDecimal.valueOf(-100), LocalDate.now(), categoriaDTO.uuidCategoria(), usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> receitaService.createReceita(receita)).isInstanceOf(FailedConditional.class)
-                    .hasMessage("O valor deve ser maior que zero.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void receitaDateInvalid() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber2");
-        ReceitaDTO receita = new ReceitaDTO(UUID.randomUUID(), "Extra", BigDecimal.valueOf(500), LocalDate.now().plusDays(10), categoriaDTO.uuidCategoria(), usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> receitaService.createReceita(receita)).isInstanceOf(FailedConditional.class)
-                    .hasMessage("Não pode inserir recebimentos futuros.");
         });
     }
 
@@ -208,10 +160,8 @@ public class ReceitaServiceIT {
 
     @Test
     public void deleteReceitaIsNull(){
-       UUID fakeUUID = UUID.randomUUID();
-
        SoftAssertions.assertSoftly(s -> {
-           s.assertThatThrownBy(() -> receitaService.deleteReceita(fakeUUID)).isInstanceOf(IsNull.class)
+           s.assertThatThrownBy(() -> receitaService.deleteReceita(UUID.randomUUID())).isInstanceOf(IsNull.class)
                    .hasMessage("Receita não encontrada.");
        });
     }

@@ -1,7 +1,7 @@
 package com.mfinancas.api.dataprovider;
 
-import com.mfinancas.api.dto.UsuarioDTO;
-import com.mfinancas.api.service.UsuarioService;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
+import com.mfinancas.api.service.usuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ public class UsuarioDataProvider {
     public UsuarioDTO createUsuarioTO() {
         UsuarioDTO usuarioDTO = new UsuarioDTO(
                 UUID.randomUUID(),
+                "Pedro Correia",
                 "jorge@gmail.com",
                 "jorge123"
 
@@ -22,9 +23,10 @@ public class UsuarioDataProvider {
         return usuarioService.createUsuario(usuarioDTO);
     }
 
-    public UsuarioDTO createUsuarioCustom(String email, String senha) {
+    public UsuarioDTO createUsuarioCustom( String nome,String email, String senha) {
         UsuarioDTO usuarioDTO = new UsuarioDTO(
                 UUID.randomUUID(),
+                nome,
                 email,
                 senha
         );

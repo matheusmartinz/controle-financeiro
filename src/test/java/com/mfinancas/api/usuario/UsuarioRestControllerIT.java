@@ -1,8 +1,8 @@
 package com.mfinancas.api.usuario;
 
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.UsuarioDTO;
-import com.mfinancas.api.repository.UsuarioRepository;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
+import com.mfinancas.api.repository.usuario.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -17,9 +17,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -53,14 +51,14 @@ public class UsuarioRestControllerIT {
     @Test
     public void postCadastroUsuario() throws Exception {
         usuarioRepository.deleteAll();
-        String usuarioJSON = objectMapper.writeValueAsString(usuarioDataProvider.createUsuarioTO());
+        String usuarioJSON = objectMapper.writeValueAsString(new UsuarioDTO(UUID.randomUUID(),"Cleiton", "cleiton.jose@gmail.com", "clieton123"));
 
         mockMvc.perform(post("/controle-financeiro/cadastro").contentType(MediaType.APPLICATION_JSON).content(usuarioJSON).accept(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.email").value("jorge@gmail.com"))
-                .andExpect(jsonPath("$.senha").value("SEGREDO"));
+                .andExpect(jsonPath("$.email").value("cleiton.jose@gmail.com"))
+                .andExpect(jsonPath("$.senha").value(""));
 
     }
 
@@ -68,8 +66,8 @@ public class UsuarioRestControllerIT {
     public void getAllUsuarios() throws Exception {
         usuarioRepository.deleteAll();
         long before = usuarioRepository.count();
-        usuarioDataProvider.createUsuarioCustom("ribeiro@gmail.com", "ribeiro123");
-        usuarioDataProvider.createUsuarioCustom("pedro@gmail.com", "pedro123");
+        usuarioDataProvider.createUsuarioCustom("Ribeiro", "ribeiro@gmail.com", "ribeiro123");
+        usuarioDataProvider.createUsuarioCustom("Pedro Correia", "pedro@gmail.com", "pedro123");
         long after = usuarioRepository.count();
 
         SoftAssertions.assertSoftly(s -> {
@@ -84,11 +82,11 @@ public class UsuarioRestControllerIT {
     }
 
     @Test
-    public void postLogin() throws Exception{
+    public void postLogin() throws Exception {
         usuarioRepository.deleteAll();
-        usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
+        usuarioDataProvider.createUsuarioCustom("Pedro Correia", "testeLogin@gmail.com", "teste123");
 
-        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeLogin@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "Pedro Correia", "testeLogin@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -96,15 +94,60 @@ public class UsuarioRestControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.email").value("testeLogin@gmail.com"))
-                .andExpect(jsonPath("$.senha").value("SEGREDO"));
+                .andExpect(jsonPath("$.senha").value(""));
     }
 
     @Test
-    public void postLoginError() throws Exception{
+    public void postSenhaIsNull() throws Exception {
         usuarioRepository.deleteAll();
-        usuarioDataProvider.createUsuarioCustom("testeLogin@gmail.com", "teste123");
+        usuarioDataProvider.createUsuarioCustom("Pedro Correia", "testeLogin@gmail.com", "teste123");
 
-        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "testeError@gmail.com", "teste123");
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "Pedro Correia", "testeLogin@gmail.com", null);
+
+        String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
+
+        mockMvc.perform(post("/controle-financeiro/login").contentType(MediaType.APPLICATION_JSON).content(usuarioJSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Obrigatório informar senha."));
+    }
+
+    @Test
+    public void postSenhaIsEmpty() throws Exception {
+        usuarioRepository.deleteAll();
+        usuarioDataProvider.createUsuarioCustom("Matheus", "email@gmail.com", "teste123");
+
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "Matheus", "email@gmail.com", "");
+
+        String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
+
+        mockMvc.perform(post("/controle-financeiro/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(usuarioJSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Obrigatório informar senha."));
+    }
+
+    @Test
+    public void postEmailInvalid() throws Exception {
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "Matheus", "titiu.com.br", "teste123");
+
+        String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
+
+        mockMvc.perform(post("/controle-financeiro/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(usuarioJSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("E-mail inválido."));
+    }
+
+    @Test
+    public void postLoginError() throws Exception {
+        usuarioRepository.deleteAll();
+        usuarioDataProvider.createUsuarioCustom("Pedro Correia", "testeLogin@gmail.com", "teste123");
+
+        UsuarioDTO usuarioRequest = new UsuarioDTO(UUID.randomUUID(), "Pedro Correia", "testeError@gmail.com", "teste123");
 
         String usuarioJSON = objectMapper.writeValueAsString(usuarioRequest);
 
@@ -115,9 +158,9 @@ public class UsuarioRestControllerIT {
     }
 
     @Test
-    public void deleteUsuario() throws Exception{
+    public void deleteUsuario() throws Exception {
         usuarioRepository.deleteAll();
-        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("deleteUsu@gmail.com", "delete123");
+        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("Pedro Correia", "deleteUsu@gmail.com", "delete123");
 
         mockMvc.perform(delete("/controle-financeiro/delete-usuario/" + usuarioSave.uuid()))
                 .andExpect(status().isOk())

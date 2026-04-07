@@ -1,8 +1,8 @@
 package com.mfinancas.api.dataprovider;
 
-import com.mfinancas.api.dto.CategoriaDTO;
-import com.mfinancas.api.dto.DespesaDTO;
-import com.mfinancas.api.service.DespesaService;
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.api.dto.despesa.DespesaDTO;
+import com.mfinancas.api.service.despesa.DespesaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

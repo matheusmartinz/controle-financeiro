@@ -1,9 +1,12 @@
 package com.mfinancas.api.despesa;
 
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.DespesaDataProvider;
-import com.mfinancas.api.dto.DespesaDTO;
-import com.mfinancas.api.repository.DespesaRepository;
-import com.mfinancas.api.service.DespesaService;
+import com.mfinancas.api.api.dto.despesa.DespesaDTO;
+import com.mfinancas.api.repository.categoria.CategoriaRepository;
+import com.mfinancas.api.repository.despesa.DespesaRepository;
+import com.mfinancas.api.service.despesa.DespesaService;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -45,6 +49,9 @@ public class DespesaRestControllerIT {
 
     @Autowired
     private DespesaService despesaService;
+
+    @Autowired
+    private CategoriaDataProvider categoriaDataProvider;
 
     @Test
     public void notFoundReturn() throws Exception {
@@ -126,6 +133,64 @@ public class DespesaRestControllerIT {
         mockMvc.perform(delete("/despesa/delete/" + despesaCriadaSalva.uuidDespesa()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("Deletado com sucesso."));
+    }
+
+    @Test
+    public void createDespesaDescricaoNull() throws Exception {
+        despesaRepository.deleteAll();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro");
+
+        DespesaDTO despesaDTO = new DespesaDTO(
+                UUID.randomUUID(), null, BigDecimal.valueOf(450), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK()
+        );
+
+        String despesaJSON = objectMapper.writeValueAsString(despesaDTO);
+
+        mockMvc.perform(post("/despesa/cadastro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(despesaJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Obrigatório informar a descrição."));
+    }
+
+    @Test
+    public void createDespesaDescricaoIsEmpty() throws Exception {
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro2");
+
+        DespesaDTO despesaDTO = new DespesaDTO(
+                UUID.randomUUID(), "", BigDecimal.valueOf(450), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK()
+        );
+
+        String despesaJSON = objectMapper.writeValueAsString(despesaDTO);
+
+        mockMvc.perform(post("/despesa/cadastro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(despesaJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Obrigatório informar a descrição."));
+    }
+
+    @Test
+    public void createDespesaValorInvalid() throws Exception {
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Alimentação");
+
+        DespesaDTO despesaDTO = new DespesaDTO(
+                UUID.randomUUID(), "Ifood", BigDecimal.valueOf(-10), LocalDate.now(),
+                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK()
+        );
+
+        String despesaJSON = objectMapper.writeValueAsString(despesaDTO);
+
+        mockMvc.perform(post("/despesa/cadastro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(despesaJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("O valor não pode ser menor do que zero."));
     }
 
 }

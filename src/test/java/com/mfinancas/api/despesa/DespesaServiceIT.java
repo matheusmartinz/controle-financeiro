@@ -1,16 +1,15 @@
 package com.mfinancas.api.despesa;
 
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.api.dto.despesa.DespesaDTO;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.DespesaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaDTO;
-import com.mfinancas.api.dto.DespesaDTO;
-import com.mfinancas.api.dto.UsuarioDTO;
-import com.mfinancas.api.exceptions.FailedConditional;
+import com.mfinancas.api.domain.entity.despesa.Despesa;
 import com.mfinancas.api.exceptions.IsNull;
-import com.mfinancas.api.model.Despesa;
-import com.mfinancas.api.repository.DespesaRepository;
-import com.mfinancas.api.service.DespesaService;
+import com.mfinancas.api.repository.despesa.DespesaRepository;
+import com.mfinancas.api.service.despesa.DespesaService;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
@@ -69,48 +68,6 @@ public class DespesaServiceIT {
             s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
                     .isInstanceOf(IsNull.class)
                     .hasMessage("Usuário não encontrado.");
-        });
-    }
-
-    @Test
-    public void createDespesaDescricaoNull() {
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro");
-
-        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), null, BigDecimal.valueOf(450), LocalDate.now(),
-                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Favor informar a descrição.");
-        });
-    }
-
-    @Test
-    public void createDespesaDescricaoIsEmpty() {
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Carro2");
-
-        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "", BigDecimal.valueOf(450), LocalDate.now(),
-                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Favor informar a descrição.");
-        });
-    }
-
-    @Test
-    public void createDespesaValorInvalid() {
-        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Alimentação");
-
-        DespesaDTO despesaDTO = new DespesaDTO(UUID.randomUUID(), "Ifood", BigDecimal.valueOf(-10), LocalDate.now(),
-                false, categoriaDTO.uuidCategoria(), categoriaDTO.usuarioFK());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> despesaService.createDespesa(despesaDTO))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("O valor deve ser maior do que zero.");
         });
     }
 

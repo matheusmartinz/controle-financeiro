@@ -1,15 +1,14 @@
 package com.mfinancas.api.categoria;
 
 import com.mfinancas.api.TipoCategoria;
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
 import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.CategoriaDTO;
-import com.mfinancas.api.dto.UsuarioDTO;
-import com.mfinancas.api.exceptions.FailedConditional;
+import com.mfinancas.api.domain.entity.categoria.Categoria;
 import com.mfinancas.api.exceptions.IsNull;
-import com.mfinancas.api.model.Categoria;
-import com.mfinancas.api.service.CategoriaRepository;
-import com.mfinancas.api.service.CategoriaService;
+import com.mfinancas.api.repository.categoria.CategoriaRepository;
+import com.mfinancas.api.service.categoria.CategoriaService;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
@@ -68,52 +67,6 @@ public class CategoriaServiceIT {
             s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, categoriaDTO.usuarioFK()))
                     .isInstanceOf(IsNull.class)
                     .hasMessage("Usuário não encontrado.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void categoriaSameName() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-
-        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioDTO.uuid());
-
-        categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid());
-
-        CategoriaDTO categoriaDTOSameName = new CategoriaDTO(UUID.randomUUID(), "Caminhão", TipoCategoria.DESPESA, usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTOSameName, usuarioDTO.uuid()))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Já existe um nome cadastrado com essa categoria.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void categoriaNomeVazio() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-
-        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "", TipoCategoria.DESPESA, usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid()))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Obrigatório informar o descricao da categoria.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void categoriaTipoNull() {
-        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
-
-        CategoriaDTO categoriaDTO = new CategoriaDTO(UUID.randomUUID(), "Grama", null, usuarioDTO.uuid());
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> categoriaService.createCategoria(categoriaDTO, usuarioDTO.uuid()))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Obrigatório informar o  tipo da categoria.");
         });
     }
 

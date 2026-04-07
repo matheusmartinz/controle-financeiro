@@ -1,0 +1,18 @@
+package com.mfinancas.api.service.superservice;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+@RequiredArgsConstructor
+public class SuperServiceSave<T, R extends JpaRepository<T, Long>> {
+
+    private final R repository;
+
+    public T save(T entity) {
+        return repository.save(entity);
+    }
+
+    public T saveAndFlush(T entity) {
+        return repository.saveAndFlush(entity);
+    }
+}

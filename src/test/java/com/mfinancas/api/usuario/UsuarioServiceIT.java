@@ -1,13 +1,11 @@
 package com.mfinancas.api.usuario;
 
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
 import com.mfinancas.api.dataprovider.UsuarioDataProvider;
-import com.mfinancas.api.dto.UsuarioDTO;
-import com.mfinancas.api.exceptions.FailedConditional;
 import com.mfinancas.api.exceptions.IsNull;
-import com.mfinancas.api.repository.UsuarioRepository;
-import com.mfinancas.api.service.UsuarioService;
+import com.mfinancas.api.repository.usuario.UsuarioRepository;
+import com.mfinancas.api.service.usuario.UsuarioService;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ public class UsuarioServiceIT {
 
     @Test
     public void createUsuario() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
+        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "Matheus", "matheus@gmail.com", "blablabla");
         int before = usuarioRepository.findAll().size();
 
         UsuarioDTO usuarioResponse = usuarioService.createUsuario(usuarioDTO);
@@ -47,7 +45,7 @@ public class UsuarioServiceIT {
 
     @Test
     public void getAllUsuarios() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "matheus@gmail.com", "blablabla");
+        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "Matheus", "matheus@gmail.com", "blablabla");
         usuarioService.createUsuario(usuarioDTO);
 
         List<UsuarioDTO> listUsuarios = usuarioService.getAll();
@@ -59,85 +57,23 @@ public class UsuarioServiceIT {
     }
 
     @Test
-    @SneakyThrows
-    public void camposNulos(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), null, null);
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO))
-                    .isInstanceOf(FailedConditional.class)
-                    .hasMessage("Obrigatório inserir todos os campos.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void requestSenhaIsNull(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "email@gmail.com", null);
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO)).isInstanceOf(FailedConditional.class).hasMessage("Obrigatório informar senha.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void requestSenhaIsEmpty(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "email@gmail.com", "");
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO)).isInstanceOf(FailedConditional.class).hasMessage("Obrigatório informar senha.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void requestEmailIsNull(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), null, "teste123");
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO)).isInstanceOf(IsNull.class).hasMessage("Obrigatório informar email.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void requestEmailIsBlank(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "", "teste123");
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO)).isInstanceOf(IsNull.class).hasMessage("Obrigatório informar email.");
-        });
-    }
-
-    @Test
-    @SneakyThrows
-    public void requestEmailInvalid(){
-        UsuarioDTO usuarioDTO = new UsuarioDTO(UUID.randomUUID(), "titiu.com.br", "teste123");
-
-        SoftAssertions.assertSoftly(s -> {
-            s.assertThatThrownBy(() -> usuarioService.postLogin(usuarioDTO)).isInstanceOf(FailedConditional.class).hasMessage("E-mail inválido.");
-        });
-    }
-
-    @Test
     @Transactional
-    public void deleteUsuario(){
+    public void deleteUsuario() {
         usuarioRepository.deleteAll();
-        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("delete.user@gmail.com", "delete123");
+        UsuarioDTO usuarioSave = usuarioDataProvider.createUsuarioCustom("Delete", "delete.user@gmail.com", "delete123");
         long afterSave = usuarioRepository.count();
 
         usuarioService.deleteUsuario(usuarioSave.uuid());
         long afterDeleted = usuarioRepository.count();
 
-        SoftAssertions.assertSoftly(s ->  {
+        SoftAssertions.assertSoftly(s -> {
             s.assertThat(afterSave).isEqualTo(1);
             s.assertThat(afterDeleted).isEqualTo(0);
         });
     }
 
     @Test
-    public void deleteUsuarioIsNull(){
+    public void deleteUsuarioIsNull() {
         UUID uuidFake = UUID.randomUUID();
 
         SoftAssertions.assertSoftly(s -> {

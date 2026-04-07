@@ -1,9 +1,13 @@
 package com.mfinancas.api.receita;
 
+import com.mfinancas.api.api.dto.categoria.CategoriaDTO;
+import com.mfinancas.api.api.dto.receita.ReceitaDTO;
+import com.mfinancas.api.api.dto.usuario.UsuarioDTO;
+import com.mfinancas.api.dataprovider.CategoriaDataProvider;
 import com.mfinancas.api.dataprovider.ReceitaDataProvider;
-import com.mfinancas.api.dto.ReceitaDTO;
-import com.mfinancas.api.model.Receita;
-import com.mfinancas.api.repository.ReceitaRepository;
+import com.mfinancas.api.dataprovider.UsuarioDataProvider;
+import com.mfinancas.api.domain.entity.receita.Receita;
+import com.mfinancas.api.repository.receita.ReceitaRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +23,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -42,8 +43,14 @@ public class ReceitaRestControllerIT {
     @Autowired
     private ReceitaRepository receitaRepository;
 
+    @Autowired
+    private CategoriaDataProvider categoriaDataProvider;
+
+    @Autowired
+    private UsuarioDataProvider usuarioDataProvider;
+
     @Test
-    public void postReceita() throws Exception{
+    public void postReceita() throws Exception {
         ReceitaDTO receitaDTO = receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha");
         String receitaJSON = objectMapper.writeValueAsString(receitaDTO);
 
@@ -55,7 +62,7 @@ public class ReceitaRestControllerIT {
     }
 
     @Test
-    public void getReceita() throws Exception{
+    public void getReceita() throws Exception {
         receitaRepository.deleteAll();
         receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinh2");
         receitaDataProvider.createReceitaCustom("Uber", BigDecimal.valueOf(900), LocalDate.now(), "Extrinha3");
@@ -63,7 +70,7 @@ public class ReceitaRestControllerIT {
         mockMvc.perform(get("/receita").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$",hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test
@@ -100,5 +107,90 @@ public class ReceitaRestControllerIT {
         mockMvc.perform(delete("/receita/delete/" + uuidFake))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Receita não encontrada."));
+    }
+
+
+    @Test
+    public void receitaDescricaoIsNull() throws Exception {
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber");
+
+        ReceitaDTO receita = new ReceitaDTO(
+                UUID.randomUUID(),
+                null,
+                BigDecimal.valueOf(400),
+                LocalDate.now(),
+                categoriaDTO.uuidCategoria(),
+                usuarioDTO.uuid()
+        );
+
+        mockMvc.perform(post("/receita/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(receita)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Obrigatório informar a descrição."));
+    }
+
+    @Test
+    public void receitaDescricaoIsEmpty() throws Exception {
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber4");
+
+        ReceitaDTO receita = new ReceitaDTO(
+                UUID.randomUUID(),
+                "",
+                BigDecimal.valueOf(400),
+                LocalDate.now(),
+                categoriaDTO.uuidCategoria(),
+                usuarioDTO.uuid()
+        );
+
+        mockMvc.perform(post("/receita/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(receita)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Obrigatório informar a descrição."));
+    }
+
+    @Test
+    public void receitaValorIsInvalid() throws Exception {
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber3");
+
+        ReceitaDTO receita = new ReceitaDTO(
+                UUID.randomUUID(),
+                "Presente de natal",
+                BigDecimal.valueOf(-100),
+                LocalDate.now(),
+                categoriaDTO.uuidCategoria(),
+                usuarioDTO.uuid()
+        );
+
+        mockMvc.perform(post("/receita/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(receita)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("O valor não pode ser menor do que zero."));
+    }
+
+    @Test
+    public void receitaDateInvalid() throws Exception {
+        UsuarioDTO usuarioDTO = usuarioDataProvider.createUsuarioTO();
+        CategoriaDTO categoriaDTO = categoriaDataProvider.createCategoria("Uber2");
+
+        ReceitaDTO receita = new ReceitaDTO(
+                UUID.randomUUID(),
+                "Extra",
+                BigDecimal.valueOf(500),
+                LocalDate.now().plusDays(10),
+                categoriaDTO.uuidCategoria(),
+                usuarioDTO.uuid()
+        );
+
+        mockMvc.perform(post("/receita/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(receita)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Não pode inserir recebimentos futuros."));
     }
 }
